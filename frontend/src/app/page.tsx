@@ -1,12 +1,9 @@
 "use client";
 
+import { redirect } from "next/navigation";
 import { useState } from "react";
 import axios from "axios";
-
-interface Story {
-  lines: string[];
-  pictures: string[];
-}
+import Story from "@/types/story";
 
 export default function Home() {
   const [message, setMessage] = useState<string>("");
@@ -14,11 +11,11 @@ export default function Home() {
     lines: [],
     pictures: [],
   });
-  // const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const generateLines = async () => {
     try {
-      const response = await axios.post("http://0.0.0.0:8000/generate", {
+      const response = await axios.post("http://0.0.0.0:8000/generate-text", {
           prompt: message,
       });
 
@@ -31,39 +28,27 @@ export default function Home() {
   };
 
   const generatePictures = async (lines: string[]) => {
-    const pictures = [];
+    let images = []
+    try {
+      const response = await axios.post("http://0.0.0.0:8000/generate-image", {
+        text: lines,
+      });
 
-    for (const line of lines) {
-      try {
-        // const response = await axios.get(`https://image.pollinations.ai/prompt/${encodeURIComponent(storyLine)}`, {
-        //   responseType: 'blob',
-        // });
+      images = response.data.images;
 
-        // const imageUrl = URL.createObjectURL(response.data);
+      console.log("picture below b64:");
+      console.log(images);
+      console.log("picture above b64:");
+    } catch (err) {
+      console.error("Error generating story pictures:", err);
+    }
 
-        const response = await fetch(`https://image.pollinations.ai/prompt/${encodeURIComponent(line)}`);
-        if (!response.ok) {
-          const errorText = await response.text(); // Get error details if possible
-          throw new Error(
-            `HTTP error! status: ${response.status}, message: ${errorText}`
-          );
-        }
-        const imageBlob = await response.blob();
-        const imageUrl = URL.createObjectURL(imageBlob);
-        console.log("picture below url:");
-        console.log(imageUrl);
-        console.log("picture above url:");
-
-        pictures.push(imageUrl);
-      } catch (err) {
-        console.error("Error generating story pictures:", err);
-      }
-    };
-
-    return pictures;
+    return images;
   };
 
   const generateStory = async () => {
+    setLoading(true);
+
     const lines = await generateLines();
     const pictures = await generatePictures(lines);
 
@@ -71,6 +56,10 @@ export default function Home() {
       lines,
       pictures,
     });
+
+    setLoading(false);
+
+    // redirect("/story", );
   };
 
   return (
@@ -82,14 +71,10 @@ export default function Home() {
           value={message} 
           onChange={(e) => setMessage(e.target.value)} 
         />
-        <button className="bg-blue-500 text-white p-2 m-2 rounded-md" onClick={() => {generateStory()}}>Generate Story</button>
-        {story.lines.map((line, i) => (
-            <div key={i}>
-              <img src={story.pictures[i]} alt={`Story Line ${i}`} />
-              <p>{line}</p>
-            </div>
-          )
-        )}
+        {loading 
+          ? <button className="bg-gray-500 hover:bg-gray-600 active:bg-gray-700 text-gray-300 p-2 m-2 rounded-md" onClick={() => {generateStory()}}>Generating...</button> 
+          : <button className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white p-2 m-2 rounded-md" onClick={() => {generateStory()}}>Generate Story</button>
+        } 
       </div>
     </div>
   );
