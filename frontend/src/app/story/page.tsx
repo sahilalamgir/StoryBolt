@@ -32,6 +32,7 @@ const page = () => {
                       alt={`Story Line ${i}`} 
                     />
                     <p className="p-4">{line}</p>
+                    <p className="p-4 text-center text-gray-500">Page {i + 1} of {story.lines.length}</p>
                   </CardContent>
                 </Card>
             </CarouselItem>

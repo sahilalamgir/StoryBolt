@@ -92,7 +92,7 @@ except Exception as e:
 
 class TextRequest(BaseModel):
     prompt: str
-    max_length: int = 2048
+    max_length: int = 4096
     temperature: float = 0.7
     system_prompt: str = """You are the best author in the world. 
     You are capable of writing the most engaging and interesting stories."""
