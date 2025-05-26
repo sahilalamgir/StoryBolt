@@ -23,14 +23,12 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <a className="text-2xl font-bold bg-gradient-to-r from-purple-700 to-indigo-500 bg-clip-text text-transparent" href="/">
+              <Link className="text-2xl font-bold bg-gradient-to-r from-purple-700 to-indigo-500 bg-clip-text text-transparent" href="/">
                 StoryForge AI
-              </a>
+              </Link>
             </div>
             <div className="flex gap-6 items-center">
-              <a href="#features" className="text-gray-700 hover:text-purple-600 transition">Features</a>
-              <a href="#how-it-works" className="text-gray-700 hover:text-purple-600 transition">How It Works</a>
-              <a href="#testimonials" className="text-gray-700 hover:text-purple-600 transition">Testimonials</a>
+            <Link href="/" className="text-gray-700 hover:text-purple-600 transition">Home</Link>
               <Link href="/community" className="text-gray-700 hover:text-purple-600 transition">Community</Link>
               
               {isLoaded && (

@@ -64,7 +64,7 @@ const StoryForm = () => {
     <div className="flex flex-col w-full max-w-2xl mx-auto">
       {/* Prompt */}
       <textarea
-        className="border-2 border-gray-300 rounded-md p-2 mb-4 w-full h-40 resize-none"
+        className="border-2 border-gray-300 bg-white rounded-md p-2 mb-4 w-full h-40 resize-none"
         placeholder="Enter your story prompt"
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
