@@ -1,10 +1,12 @@
+"use client";
+
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 
 const Hero = () => {
     const router = useRouter();
-    const { isSignedIn, isLoaded } = useAuth();
+    const { isSignedIn } = useAuth();
     const navigateToCreate = () => {
         
         if (isSignedIn) {
