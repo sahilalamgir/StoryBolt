@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const Navbar = () => {
   const router = useRouter();
@@ -30,6 +31,7 @@ const Navbar = () => {
               <a href="#features" className="text-gray-700 hover:text-purple-600 transition">Features</a>
               <a href="#how-it-works" className="text-gray-700 hover:text-purple-600 transition">How It Works</a>
               <a href="#testimonials" className="text-gray-700 hover:text-purple-600 transition">Testimonials</a>
+              <Link href="/community" className="text-gray-700 hover:text-purple-600 transition">Community</Link>
               
               {isLoaded && (
                 isSignedIn ? (

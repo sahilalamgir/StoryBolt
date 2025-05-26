@@ -30,24 +30,17 @@ const StoryForm = () => {
           console.log(paragraphs);
           console.log(imagePrompts);
     
-          const { data: imageData } = await axios.post("/api/generate/images", { imagePrompts });
+          const { data: imageData } = await axios.post("/api/generate/images", { allImagePrompts: [title, ...imagePrompts] });
           console.log("HEREREERER", imageData);
 
-        //   const compressed: string[] = imageData.images;
+          const images = imageData.images;
 
-        //   const images = compressed.map((c) => {
-        //     const b64 = LZString.decompressFromBase64(c);
-        //     return `data:image/jpeg;base64,${b64}`;
-        //   });
-
-        //   const images = imageData.images;
-
-          const images = await Promise.all(
-            imageData.imageUrls.map(async (imageUrl: string) => {
-              const response = await axios.get(imageUrl, { responseType: "blob" })
-              return URL.createObjectURL(response.data);
-            })
-          );
+          // const images = await Promise.all(
+          //   imageData.imageUrls.map(async (imageUrl: string) => {
+          //     const response = await axios.get(imageUrl, { responseType: "blob" })
+          //     return URL.createObjectURL(response.data);
+          //   })
+          // );
 
           console.log("in here", images);
         

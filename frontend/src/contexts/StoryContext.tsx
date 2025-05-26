@@ -8,10 +8,11 @@ interface StoryContextProps {
   setStory: (story: Story) => void;
 };
 
-const defaultStory: Story = {
+export const defaultStory: Story = {
     title: "",
-    lines: [],
-    pictures: [],
+    paragraphs: [],
+    images: [],
+    genre: "",
 };
 
 const StoryContext = createContext<StoryContextProps>({

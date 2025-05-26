@@ -5,27 +5,18 @@ import pLimit from 'p-limit'
 
 export async function POST(req: NextRequest) {
   try {
-    const { imagePrompts } = await req.json();
-    const imageUrls = imagePrompts.map((imagePrompt: string) =>
-        `https://image.pollinations.ai/prompt/${encodeURIComponent(imagePrompt)}?model=turbo&width=512&height=512&nologo=true`
-    );
-    // console.log(imagePrompts);
-
-    // const limit = pLimit(5);
-
-    // const images = await Promise.all(
-    //     imagePrompts.map((imagePrompt: string) => { 
-    //         limit(async () => { 
-    //             const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(imagePrompt)}?model=turbo&width=512&height=512&nologo=true`;
-    //             const resp = await axios.get(url, { responseType: 'arraybuffer' });
-    //             const b64 = Buffer.from(resp.data).toString('base64');
-    //             const compressed = LZString.compressToBase64(b64);
-    //             return compressed;
-    //         })
-    //     })
+    const { allImagePrompts } = await req.json();
+    // const imageUrls = allImagePrompts.map((imagePrompt: string) =>
+    //     `https://image.pollinations.ai/prompt/${encodeURIComponent(imagePrompt)}?model=turbo&width=512&height=512&nologo=true&safe=true`
     // );
-
-    return NextResponse.json({ imageUrls });
+    const images = await Promise.all(
+      allImagePrompts.map(async (imagePrompt: string) => {
+        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(imagePrompt)}?model=turbo&width=512&height=512&nologo=true&safe=true`
+        const resp = await axios.get(url, { responseType: 'arraybuffer' })
+        return `data:image/jpeg;base64,${Buffer.from(resp.data).toString('base64')}`
+      })
+    )
+    return NextResponse.json({ images });
   } catch (err: any) {
     console.error(err)
     return NextResponse.json({ error: err.message }, { status: 500 })
