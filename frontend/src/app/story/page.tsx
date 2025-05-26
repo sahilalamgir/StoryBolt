@@ -39,7 +39,7 @@ const page = () => {
     if (!client) return
     await client.from('books').insert({
       title: story.title,
-      genre: "Fantasy",
+      genre: story.genre,
       page_count: story.paragraphs.length,
     })
   }, [client, story]);

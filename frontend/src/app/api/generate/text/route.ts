@@ -4,7 +4,7 @@ import axios from "axios";
 export async function POST(req: Request) {
     try {
         const { prompt, genre, pageCount } = await req.json();
-        console.log(prompt);
+        console.log(prompt, genre, pageCount);
         const aiPrompt = `Genre: ${genre}
         User prompt: ${prompt}
         

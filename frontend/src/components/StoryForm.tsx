@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from "axios";
 import { useStory } from "@/contexts/StoryContext";
+import { usePollinationsImage } from '@pollinations/react';
 
 const GENRES = ["Fantasy", "Sci-Fi", "Mystery", "Romance"];
 
@@ -15,40 +16,59 @@ const StoryForm = () => {
     const [pageCount, setPageCount] = useState(10);
     const [loading, setLoading] = useState<boolean>(false);
 
+    // helper: returns a promise that resolves when img at `url` is loaded (or errors)
+  function preloadImage(url: string): Promise<void> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => resolve();
+      img.onerror = () => {
+        console.warn('Image failed to load:', url);
+        resolve();
+      };
+    });
+  }
+
     const generateStory = useCallback(async () => {
         try {
           setLoading(true);
     
-          const textResponse = await axios.post('/api/generate/text', { prompt, genre, pageCount }, {
+          const { data: textData } = await axios.post('/api/generate/text', { prompt, genre, pageCount }, {
             headers: {
               'Content-Type': 'application/json',
             }
           });
-          const { title, paragraphs } = textResponse.data;
+          const { title, paragraphs } = textData;
           console.log(title);
           console.log(paragraphs);
     
-          const imageResponse = await axios.post("/api/generate/images", { paragraphs });
-          console.log("HEREREERER", imageResponse.data);
-          const images = await Promise.all(
-            imageResponse.data.imageUrls.map(async (imageUrl: string) => {
-              const response = await axios.get(imageUrl, { responseType: "blob" })
-              return URL.createObjectURL(response.data);
-            })
-          );
+          const { data: imageData } = await axios.post("/api/generate/images", { paragraphs });
+          console.log("HEREREERER", imageData);
+
+          const images = imageData.images;
+
+        //   const images = await Promise.all(
+        //     imageResponse.data.imageUrls.map(async (imageUrl: string) => {
+        //       const response = await axios.get(imageUrl, { responseType: "blob" })
+        //       return URL.createObjectURL(response.data);
+        //     })
+        //   );
+
           console.log("in here", images);
+        
     
           setStory({
             title, 
             paragraphs, 
             images, 
+            genre, 
           });
-    
-          setLoading(false);
     
           router.push("/story");
         } catch (err) {
           console.error("Error generating story:", err);
+        } finally {
+            setLoading(false);
         }
       }, [prompt, genre, pageCount, setStory, router]);
 
