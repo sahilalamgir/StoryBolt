@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from "axios";
 import { useStory } from "@/contexts/StoryContext";
-import { usePollinationsImage } from '@pollinations/react';
+import LZString from 'lz-string';
 
 const GENRES = ["Fantasy", "Sci-Fi", "Mystery", "Romance"];
 
@@ -16,19 +16,6 @@ const StoryForm = () => {
     const [pageCount, setPageCount] = useState(10);
     const [loading, setLoading] = useState<boolean>(false);
 
-    // helper: returns a promise that resolves when img at `url` is loaded (or errors)
-  function preloadImage(url: string): Promise<void> {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => resolve();
-      img.onerror = () => {
-        console.warn('Image failed to load:', url);
-        resolve();
-      };
-    });
-  }
-
     const generateStory = useCallback(async () => {
         try {
           setLoading(true);
@@ -38,21 +25,29 @@ const StoryForm = () => {
               'Content-Type': 'application/json',
             }
           });
-          const { title, paragraphs } = textData;
+          const { title, paragraphs, imagePrompts } = textData;
           console.log(title);
           console.log(paragraphs);
+          console.log(imagePrompts);
     
-          const { data: imageData } = await axios.post("/api/generate/images", { paragraphs });
+          const { data: imageData } = await axios.post("/api/generate/images", { imagePrompts });
           console.log("HEREREERER", imageData);
 
-          const images = imageData.images;
+        //   const compressed: string[] = imageData.images;
 
-        //   const images = await Promise.all(
-        //     imageResponse.data.imageUrls.map(async (imageUrl: string) => {
-        //       const response = await axios.get(imageUrl, { responseType: "blob" })
-        //       return URL.createObjectURL(response.data);
-        //     })
-        //   );
+        //   const images = compressed.map((c) => {
+        //     const b64 = LZString.decompressFromBase64(c);
+        //     return `data:image/jpeg;base64,${b64}`;
+        //   });
+
+        //   const images = imageData.images;
+
+          const images = await Promise.all(
+            imageData.imageUrls.map(async (imageUrl: string) => {
+              const response = await axios.get(imageUrl, { responseType: "blob" })
+              return URL.createObjectURL(response.data);
+            })
+          );
 
           console.log("in here", images);
         
@@ -105,14 +100,15 @@ const StoryForm = () => {
         {/* Page Count */}
         <div className="flex items-center space-x-2">
           <label htmlFor="pageCount" className="font-medium">
-            Pages:
+            Page(s):
           </label>
           <input
             id="pageCount"
             type="number"
             min={1}
+            max={20}
             value={pageCount}
-            onChange={(e) => setPageCount(Number(e.target.value) || 1)}
+            onChange={(e) => setPageCount(Number(e.target.value) | 1)}
             className="border-2 border-gray-300 rounded-md p-2 w-20 text-center"
           />
         </div>
