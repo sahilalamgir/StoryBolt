@@ -92,7 +92,7 @@ except Exception as e:
 
 class TextRequest(BaseModel):
     prompt: str
-    max_length: int = 1024
+    max_length: int = 2048
     temperature: float = 0.7
     system_prompt: str = """You are the best author in the world. 
     You are capable of writing the most engaging and interesting stories."""
@@ -102,6 +102,7 @@ class ImageRequest(BaseModel):
     
 @app.post("/generate-text")
 async def generate_text(request: TextRequest):
+    print(request.prompt)
     try:
         # Time the generation process
         start_time = time.time()
@@ -187,7 +188,7 @@ async def generate_image(request: ImageRequest):
             print(img_b64[:100])
 
             images.append(img_b64)
-        print(images.map(lambda x: x[100]))
+        print(list(map(lambda x: x[100], images)))
         return {"images": images}
     
     except Exception as e:

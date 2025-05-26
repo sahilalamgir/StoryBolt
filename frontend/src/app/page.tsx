@@ -1,16 +1,14 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import axios from "axios";
-import Story from "@/types/story";
+import { useStory } from "@/contexts/StoryContext";
 
 export default function Home() {
+  const router = useRouter();
   const [message, setMessage] = useState<string>("");
-  const [story, setStory] = useState<Story>({
-    lines: [],
-    pictures: [],
-  });
+  const { setStory } = useStory();
   const [loading, setLoading] = useState<boolean>(false);
 
   const generateLines = async () => {
@@ -52,14 +50,11 @@ export default function Home() {
     const lines = await generateLines();
     const pictures = await generatePictures(lines);
 
-    setStory({
-      lines,
-      pictures,
-    });
+    setStory({lines, pictures});
 
     setLoading(false);
 
-    // redirect("/story", );
+    router.push("/story");
   };
 
   return (
@@ -72,9 +67,9 @@ export default function Home() {
           onChange={(e) => setMessage(e.target.value)} 
         />
         {loading 
-          ? <button className="bg-gray-500 hover:bg-gray-600 active:bg-gray-700 text-gray-300 p-2 m-2 rounded-md" onClick={() => {generateStory()}}>Generating...</button> 
+          ? <button className="bg-gray-500 text-gray-300 p-2 m-2 rounded-md" disabled onClick={() => {generateStory()}}>Generating...</button> 
           : <button className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white p-2 m-2 rounded-md" onClick={() => {generateStory()}}>Generate Story</button>
-        } 
+        }
       </div>
     </div>
   );
