@@ -11,46 +11,64 @@ const page = () => {
   const { setStory } = useStory();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const generateLines = async () => {
+  const generateText = async () => {
     try {
-      const response = await axios.post("http://0.0.0.0:8000/generate-text", {
-          prompt: message,
-      });
+      const response = await axios.post('/api/generate/text', 
+        {
+          message
+        }, 
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      )
+      console.log(response.data);
 
-      console.log(response.data.generated_text);
-
-      return response.data.generated_text.split("\n\n");
+      return response.data;
     } catch (err) {
-      console.error("Error generating story lines:", err);
+      console.error("Error generating text:", err);
     }
   };
 
-  const generatePictures = async (lines: string[]) => {
-    let images = []
+  const generateImages = async (paragraphs: string[]) => {
+    let images = [];
     try {
-      const response = await axios.post("http://0.0.0.0:8000/generate-image", {
-        text: lines,
+      const response = await axios.post("/api/generate/images", {
+        paragraphs,
       });
 
-      images = response.data.images;
+      console.log("HEREREERER", response.data);
 
-      console.log("picture below b64:");
-      console.log(images);
-      console.log("picture above b64:");
+      const imageUrls = response.data.imageUrls;
+
+      images = await Promise.all(
+        imageUrls.map(async (imageUrl: string) => {
+          const response = await axios.get(imageUrl, { responseType: "blob" })
+          return URL.createObjectURL(response.data);
+        })
+      );
     } catch (err) {
-      console.error("Error generating story pictures:", err);
+      console.error("Error generating images:", err);
     }
-
     return images;
   };
 
   const generateStory = async () => {
     setLoading(true);
 
-    const lines = await generateLines();
-    const pictures = await generatePictures(lines);
+    const { title, paragraphs } = await generateText();
+    console.log(title);
+    console.log(paragraphs);
+    const images = await generateImages(paragraphs);
+    console.log("in here", images)
+    
 
-    setStory({lines, pictures});
+    setStory({
+      title, 
+      paragraphs, 
+      images, 
+    });
 
     setLoading(false);
 
@@ -58,20 +76,21 @@ const page = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen py-10">
+    <div className="flex flex-col items-center min-h-screen pt-32 pb-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <div className="flex flex-col items-center justify-center w-1/2">
-        <h1 className="text-4xl font-bold mb-6">
-          Create your own story
+        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+          <span className="bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent">Create Your Own </span>
+          <span className="bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">Story</span>
         </h1>
         <textarea 
-          className="border-2 border-gray-300 rounded-md p-2 mb-2 w-full resize-none" 
+          className="border-2 border-gray-300 rounded-md p-2 mb-8 w-full min-h-12 h-40" 
           placeholder="Enter your story prompt" 
           value={message} 
           onChange={(e) => setMessage(e.target.value)} 
         />
         {loading 
-          ? <button className="bg-gray-500 text-gray-300 p-2 m-2 rounded-md" disabled onClick={() => {generateStory()}}>Generating...</button> 
-          : <button className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white p-2 m-2 rounded-md" onClick={() => {generateStory()}}>Generate Story</button>
+          ? <button className="bg-gray-500 text-white font-bold py-4 px-8 rounded-xl shadow-xl text-lg" disabled>Generating...</button> 
+          : <button className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-4 px-8 rounded-xl shadow-xl hover:shadow-2xl transform transition hover:translate-y-[-2px] text-lg" onClick={() => {generateStory()}}>Generate Story</button>
         }
       </div>
     </div>

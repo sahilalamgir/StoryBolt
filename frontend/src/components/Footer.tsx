@@ -16,7 +16,7 @@ const Footer = () => {
           </div>
           <div className="border-t border-indigo-800 pt-8">
             <p className="text-center text-indigo-300">Your imagination, our technology - together creating endless stories.</p>
-            <p className="text-center text-sm mt-4 text-indigo-400">© 2023 StoryForge AI. All rights reserved.</p>
+            <p className="text-center text-sm mt-4 text-indigo-400">© {new Date().getFullYear()} StoryForge AI. All rights reserved.</p>
           </div>
         </div>
       </footer>

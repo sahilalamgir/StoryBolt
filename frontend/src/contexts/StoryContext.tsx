@@ -9,6 +9,7 @@ interface StoryContextProps {
 };
 
 const defaultStory: Story = {
+    title: "",
     lines: [],
     pictures: [],
 };

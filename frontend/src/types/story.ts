@@ -1,6 +1,7 @@
 interface Story {
-    lines: string[];
-    pictures: string[];
+    title: string;
+    paragraphs: string[];
+    images: string[];
 }
 
 export default Story;

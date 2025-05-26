@@ -75,27 +75,29 @@ img_load_time = time.time() - img_start_time
 print(f"Image model loaded in {img_load_time:.2f} seconds on {image_device}")
 
 # Test image generation with a simple prompt - proper way
-try:
-    print("Testing image generation...")
-    test_start = time.time()
-    with torch.no_grad():
-        test_output = image_pipe(
-            "test",
-            num_inference_steps=1,
-            guidance_scale=0.0
-        )
-    test_time = time.time() - test_start
-    print(f"Image model test successful - generated test image in {test_time:.2f}s")
-except Exception as e:
-    print(f"Warning: Image model test failed: {e}")
-    print("The API will still try to use the model when requested")
+# try:
+#     print("Testing image generation...")
+#     test_start = time.time()
+#     with torch.no_grad():
+#         test_output = image_pipe(
+#             "test",
+#             num_inference_steps=1,
+#             guidance_scale=0.0
+#         )
+#     test_time = time.time() - test_start
+#     print(f"Image model test successful - generated test image in {test_time:.2f}s")
+# except Exception as e:
+#     print(f"Warning: Image model test failed: {e}")
+#     print("The API will still try to use the model when requested")
 
 class TextRequest(BaseModel):
     prompt: str
+    genre: str
+    page_count: int
     max_length: int = 4096
     temperature: float = 0.7
-    system_prompt: str = """You are the best author in the world. 
-    You are capable of writing the most engaging and interesting stories."""
+    system_prompt: str = """You are an expert storyteller, and are 
+capable of writing the most engaging and interesting stories."""
 
 class ImageRequest(BaseModel):
     text: list[str]
@@ -109,8 +111,16 @@ async def generate_text(request: TextRequest):
         
         messages = [
             {"role": "system", "content": request.system_prompt},
-            {"role": "user", "content": f"""You must write a long and compelling 
-             story given the following user prompt: {request.prompt}"""}
+            {"role": "user", "content": f"""Genre: {request.genre}
+User prompt: {request.prompt}
+
+Please output exactly {request.page_count} paragraphs (excluding the title) and nothing else.
+
+Make sure:
+- The first line begins with `Title: ` followed by your chosen title.
+- There are two newline characters (`\\n\\n`) between the title and paragraph 1, and between each pair of paragraphs.
+- You produce exactly {request.page_count} paragraphs — no more, no fewer.
+- Each paragraph is substantial (at least 3–5 sentences) and compelling."""}
         ]
         
         # Apply chat template
