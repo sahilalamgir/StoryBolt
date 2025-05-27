@@ -69,19 +69,20 @@ const Page = ({ params }: { params: { id: string } }) => {
   }, [client, id]);
 
     // 1) Favorite handler
-  const favoriteStory = useCallback(async () => {
-    if (!client) return;
-    const { error } = await client
-      .from('books')
-      .update({ favorited: true })
-      .eq('id', id);
-    if (error) {
-      console.error("Favorite error:", error);
-      alert("Could not favorite story.");
-    } else {
-      alert("Story favorited!");
-    }
-  }, [client, id]);
+    const favoriteStory = useCallback(async () => {
+      if (!client || !id) return;
+      const { error } = await client
+        .from('favorites')
+        .insert({
+          book_id: id,
+        });
+      if (error) {
+        console.error("Favorite error:", error);
+        alert("Could not favorite story.");
+      } else {
+        alert("Story favorited!");
+      }
+    }, [client, id]);
 
   // 2) Publish handler
   const publishStory = useCallback(async () => {
@@ -102,9 +103,9 @@ const Page = ({ params }: { params: { id: string } }) => {
     const unfavoriteStory = useCallback(async () => {
         if (!client) return;
         const { error } = await client
-        .from('books')
-        .update({ favorited: false })
-        .eq('id', id);
+        .from('favorites')
+        .delete()
+        .eq('book_id', id);
         if (error) {
             console.error("Unfavorite error:", error);
             alert("Could not unfavorite story.");
@@ -147,7 +148,6 @@ const Page = ({ params }: { params: { id: string } }) => {
                         Unfavorite Story
                       </button>
                     }
-                
               </>
         }
     </div>

@@ -53,7 +53,7 @@ export default function StoryPage() {
           genre:       story.genre,
           page_count:  story.paragraphs.length,
           cover_image: story.images[0],
-          favorited:   false,
+          // favorited:   false,
           published:   false,
         })
         .select('id')
@@ -81,9 +81,10 @@ export default function StoryPage() {
   const favoriteStory = useCallback(async () => {
     if (!client || !bookId) return;
     const { error } = await client
-      .from('books')
-      .update({ favorited: true })
-      .eq('id', bookId);
+      .from('favorites')
+      .insert({
+        book_id: bookId,
+      });
     if (error) {
       console.error("Favorite error:", error);
       alert("Could not favorite story.");

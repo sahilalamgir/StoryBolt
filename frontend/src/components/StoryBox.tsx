@@ -24,18 +24,28 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
             setLoading(true);
             try {
                 // build up your query
-                let builder = client
-                  .from("books")
-                  .select("id, title, genre, cover_image");
-                
+                let builder;
                 if (type === 'favorited') {
-                    builder = builder
-                    .eq("favorited", true)
-                    .eq("user_id", user.id);
-                } else if (type === 'community') {
-                    builder = builder.eq("published", true);
+                    const { data: favoriteData, error: favoriteError } = await client
+                        .from("favorites")
+                        .select("book_id")
+                        .eq("user_id", user.id);
+                    if (favoriteError) {
+                        console.error(favoriteError);
+                    }
+                    builder = client
+                        .from("books")
+                        .select("id, title, genre, cover_image")
+                        .in("id", favoriteData?.map(f => f.book_id) || []);
                 } else {
-                    builder = builder.eq("user_id", user.id);
+                    builder = client
+                        .from("books")
+                        .select("id, title, genre, cover_image");
+                    if (type === 'community') {
+                        builder = builder.eq("published", true);
+                    } else {
+                        builder = builder.eq("user_id", user.id);
+                    }
                 }
           
                 if (query) {
