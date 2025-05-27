@@ -1,158 +1,135 @@
 "use client";
 
-import { useMemo, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useStory } from "@/contexts/StoryContext";
-import { useSession, useUser } from '@clerk/nextjs'
+import { useSession, useUser } from '@clerk/nextjs';
 import createClerkSupabaseClient from '@/lib/supabase';
 import Story from '@/components/Storybook';
 
-const page = () => {
-  // The `useSession()` hook will be used to get the Clerk `session` object
-	const { session, isLoaded: sessionLoaded } = useSession();
-  const { user, isLoaded: userLoaded } = useUser();
+export default function StoryPage() {
   const { story } = useStory();
+  const { session, isLoaded: sessionLoaded } = useSession();
+  const { user, isLoaded: userLoaded } = useUser();
+  const [bookId, setBookId] = useState<string | null>(null);
+  const hasInserted = useRef(false);
 
+  // build Supabase client once
   const client = useMemo(() => {
     if (!sessionLoaded) return null;
     return createClerkSupabaseClient(session);
   }, [sessionLoaded, session]);
 
+  // 1) On first mount (or when story changes) insert the book+pages exactly once
   useEffect(() => {
-    console.log('StoryPage mounted or story changed:', story)
-  }, [story]);
+    if (!client || !userLoaded || hasInserted.current) return;
+    if (!story.title) return; // nothing to insert yet
 
-  const savePages = async (bookId: string) => {
-    if (!client) return;
+    hasInserted.current = true;  // prevent re‑runs
+    (async () => {
+      // attempt to find an existing book row
+      const { data: existing, error: selErr } = await client
+        .from('books')
+        .select('id')
+        .eq('user_id', user!.id)
+        .eq('title', story.title)
+        .maybeSingle();
 
-    // bulk‑insert pages
-    const pagesInserts = story.paragraphs.map((para, i) => ({
-      book_id:      bookId,
-      page_number:  i + 1,
-      text_content: para,
-      image_path:   story.images[i + 1],
-    }));
-    const { error: pagesErr } = await client
-      .from("pages")
-      .insert(pagesInserts);
-    if (pagesErr) console.error("Could not insert pages:", pagesErr);
-  }
-  
-  const saveStory = async () => {
-    if (!client || !user) return;
+      if (selErr) {
+        console.error("Error checking existing book:", selErr);
+        return;
+      }
 
-    // check for existing by user+title
-    const { data: existing, error: _err } = await client
-      .from("books")
-      .select("id, saved, published")
-      .eq("user_id", user.id)
-      .eq("title", story.title)
-      .maybeSingle();
-    
-    if (!existing) {
-      // first time ever: insert book with saved=true
-      const { data: bookRow, error: insertErr } = await client
-        .from("books")
+      if (existing?.id) {
+        setBookId(existing.id);
+        return;
+      }
+
+      // insert new book
+      const { data: newBook, error: insErr } = await client
+        .from('books')
         .insert({
+          user_id:     user!.id,
           title:       story.title,
           genre:       story.genre,
           page_count:  story.paragraphs.length,
           cover_image: story.images[0],
-          saved:       true,
+          saved:       false,
           published:   false,
         })
-        .select("id")
+        .select('id')
         .single();
 
-      if (insertErr || !bookRow) {
-        console.error("Could not save book:", insertErr);
+      if (insErr || !newBook?.id) {
+        console.error("Error inserting book:", insErr);
         return;
       }
+      setBookId(newBook.id);
 
-      await savePages(bookRow.id);
+      // bulk insert pages
+      const pages = story.paragraphs.map((para, idx) => ({
+        book_id:      newBook.id,
+        page_number:  idx + 1,
+        text_content: para,
+        image_path:   story.images[idx + 1],
+      }));
+      const { error: pagesErr } = await client.from('pages').insert(pages);
+      if (pagesErr) console.error("Error inserting pages:", pagesErr);
+    })();
+  }, [client, userLoaded, story]);
 
-      alert("Book saved!");
-      return;
-    }
-
-    // already existed
-    if (existing.saved) {
-      alert("You've already saved this book.");
-      return;
-    }
-
-    // flip saved flag to true
-    const { error: updErr } = await client
-      .from("books")
+  // 2) “Save” (favorite) handler
+  const saveStory = useCallback(async () => {
+    if (!client || !bookId) return;
+    const { data, error } = await client
+      .from('books')
       .update({ saved: true })
-      .eq("id", existing.id);
-    if (updErr) console.error(updErr);
-    else alert("Book saved!");
-  }
+      .eq('id', bookId);
+    if (error) {
+      console.error("Save error:", error);
+      alert("Could not save story.");
+    } else {
+      alert("Story saved!");
+    }
+  }, [client, bookId]);
 
-  const publishStory = async () => {
-    if (!client || !user) return;
-
-    // check for existing
-    const { data: existing, error: _err } = await client
-      .from("books")
-      .select("id, saved, published")
-      .eq("user_id", user.id)
-      .eq("title", story.title)
-      .maybeSingle();
-    
-      if (!existing) {
-        // first time: insert with published=true
-        const { data: bookRow, error: insertErr } = await client
-          .from("books")
-          .insert({
-            title:       story.title,
-            genre:       story.genre,
-            page_count:  story.paragraphs.length,
-            cover_image: story.images[0],
-            saved:       false,
-            published:   true,
-          })
-          .select("id")
-          .single();
-        
-        if (insertErr || !bookRow) {
-          console.error("Could not publish book:", insertErr);
-          return;
-        }
-
-        await savePages(bookRow.id);
-
-        alert("Book published!");
-        return;
-      }
-
-      if (existing.published) {
-        alert("This book is already published.");
-        return;
-      }
-  
-      // flip published flag
-      const { error: updErr } = await client
-        .from("books")
-        .update({ published: true })
-        .eq("id", existing.id);
-      if (updErr) console.error(updErr);
-      else alert("Book published!");
-  }
+  // 3) Publish handler
+  const publishStory = useCallback(async () => {
+    if (!client || !bookId) return;
+    const { data, error } = await client
+      .from('books')
+      .update({ published: true })
+      .eq('id', bookId);
+    if (error) {
+      console.error("Publish error:", error);
+      alert("Could not publish story.");
+    } else {
+      alert("Story published!");
+    }
+  }, [client, bookId]);
 
   return (
-    <div className="flex flex-col items-center min-h-screen pt-32 pb-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+    <div className="flex flex-col items-center min-h-screen pt-32 pb-20
+                    bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <Story story={story} />
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <button className="bg-white border-2 border-indigo-600 text-indigo-600 font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 transition" onClick={saveStory}>
+
+      <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+        <button
+          onClick={saveStory}
+          className="bg-white border-2 border-indigo-600 text-indigo-600
+                     font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 transition"
+        >
           Save Story
         </button>
-        <button className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transform transition hover:translate-y-[-2px]" onClick={publishStory}>
+
+        <button
+          onClick={publishStory}
+          className="bg-gradient-to-r from-purple-600 to-indigo-600
+                     text-white font-bold py-3 px-8 rounded-xl shadow-lg
+                     hover:shadow-xl transform transition hover:-translate-y-1"
+        >
           Publish Story
         </button>
       </div>
     </div>
-  )
+  );
 }
-
-export default page;
