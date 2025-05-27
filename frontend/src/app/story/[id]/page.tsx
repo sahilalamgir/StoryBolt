@@ -121,8 +121,8 @@ const Page = ({ params }: { params: { id: string } }) => {
             ? <p>Loading...</p>
             : <>
                 <Storybook story={ story } />
-                {(type === "history")
-                    ? <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                {(type === "history") &&
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
                         <button
                         onClick={favoriteStory}
                         className="bg-white border-2 border-indigo-600 text-indigo-600
@@ -140,15 +140,26 @@ const Page = ({ params }: { params: { id: string } }) => {
                         Publish Story
                         </button>
                       </div>
-                    : <button
+                }
+                {(type === "favorited") &&
+                    <button
                         onClick={unfavoriteStory}
                         className="bg-white border-2 border-indigo-600 text-indigo-600
                                     font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 transition"
-                        >
+                    >
                         Unfavorite Story
-                      </button>
-                    }
-              </>
+                    </button>
+                }
+                {(type === "community") &&
+                    <button
+                        onClick={favoriteStory}
+                        className="bg-white border-2 border-indigo-600 text-indigo-600
+                                    font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 transition"
+                    >
+                        Favorite Story
+                    </button>
+                }
+            </>
         }
     </div>
   )
