@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button"
 
 const GENRES = ["All", "Fantasy", "Sci-Fi", "Mystery", "Romance"];
 
-const StorySearch = ({ query, genre }: { query?: string, genre?: string }) => {
+const StorySearch = ({ query, genre, type }: { query?: string, genre?: string, type: string }) => {
   return (
-    <Form action="/community" scroll={false} id='search-form' className="max-w-xl w-full bg-white border-2 border-gray-300 rounded-full text-[16px] mt-6 mb-10 flex items-center space-x-2">
+    <Form action={(type === 'saved') ? "/saved" : "/community"} scroll={false} id='search-form' className="max-w-xl w-full bg-white border-2 border-gray-300 rounded-full text-[16px] mt-6 mb-10 flex items-center space-x-2">
         <input 
             name="query"
             defaultValue={query}

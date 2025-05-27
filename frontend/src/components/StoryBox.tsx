@@ -3,29 +3,37 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Card, CardContent } from "@/components/ui/card";
 import Link from 'next/link';
-import { useSession } from '@clerk/nextjs'
+import { useSession, useUser } from '@clerk/nextjs'
 import createClerkSupabaseClient from '@/lib/supabase';
 
-const StoryBox = ({ query, genre }: { query?: string, genre?: string }) => {
-    const { session, isLoaded } = useSession();
+const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type: string }) => {
+    const { session, isLoaded: sessionLoaded } = useSession();
+    const { user, isLoaded: userLoaded } = useUser();
     const [stories, setStories] = useState<{ id: string, title: string, genre: string, cover_image: string }[]>([]);
     const [loading, setLoading] = useState(true);
 
     const client = useMemo(() => {
-        if (!isLoaded) return null;
+        if (!sessionLoaded) return null;
         return createClerkSupabaseClient(session);
-    }, [isLoaded, session]);
+    }, [sessionLoaded, session]);
 
     useEffect(() => {
-        if (!client) return;
+        if (!client || !user) return;
         const fetchStories = async () => {
             setLoading(true);
             try {
                 // build up your query
                 let builder = client
                   .from("books")
-                  .select("id, title, genre, cover_image")
-                  .eq("published", true);
+                  .select("id, title, genre, cover_image");
+                
+                if (type === 'saved') {
+                    builder = builder
+                    .eq("saved", true)
+                    .eq("user_id", user.id);
+                } else {
+                    builder = builder.eq("published", true);
+                } 
           
                 if (query) {
                   builder = builder.ilike("title", `%${query}%`);
@@ -60,7 +68,7 @@ const StoryBox = ({ query, genre }: { query?: string, genre?: string }) => {
                 <Card className="p-0">
                 <CardContent className="p-0 flex flex-col">
                     <img className="rounded-t-lg w-full" src={s.cover_image} alt="" />
-                    <div className="p-4 pb-0 overflow-hidden h-[4rem]">
+                    <div className="p-4 pb-0 overflow-hidden min-h-[4rem]">
                         <p className="m-0 leading-tight">{s.title}</p>
                     </div>
                     <p className="p-4 text-center text-gray-500">{s.genre}</p>
