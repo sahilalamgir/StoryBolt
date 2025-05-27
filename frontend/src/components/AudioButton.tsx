@@ -25,5 +25,12 @@ export default function AudioButton({ text }: { text: string }) {
       audio.play();
     }, [text]);
 
-  return <Button className='hover:opacity-70 active:opacity-40' onClick={playAudio}>🎧 Play Audio</Button>;
+  return <Button className="bg-gradient-to-r from-indigo-500 to-pink-500 font-bold py-3 px-8 rounded-xl shadow-md
+        hover:shadow-lg 
+        hover:from-indigo-600 
+        hover:to-pink-600 
+        active:from-indigo-700 
+        active:to-pink-700 
+        transition-all 
+        duration-200" onClick={playAudio}>🎧 Play Audio</Button>;
 }

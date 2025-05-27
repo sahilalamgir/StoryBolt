@@ -129,7 +129,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                         <button
                         onClick={favoriteStory}
                         className="bg-white border-2 border-indigo-600 text-indigo-600
-                                    font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 transition"
+                                    font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 active:bg-indigo-100 transition"
                         >
                         Favorite Story
                         </button>
@@ -148,7 +148,7 @@ const Page = ({ params }: { params: { id: string } }) => {
                     <button
                         onClick={unfavoriteStory}
                         className="bg-white border-2 border-indigo-600 text-indigo-600
-                                    font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 transition"
+                                    font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 active:bg-indigo-100 transition"
                     >
                         Unfavorite Story
                     </button>
