@@ -31,9 +31,11 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
                     builder = builder
                     .eq("saved", true)
                     .eq("user_id", user.id);
-                } else {
+                } else if (type === 'community') {
                     builder = builder.eq("published", true);
-                } 
+                } else {
+                    builder = builder.eq("user_id", user.id);
+                }
           
                 if (query) {
                   builder = builder.ilike("title", `%${query}%`);

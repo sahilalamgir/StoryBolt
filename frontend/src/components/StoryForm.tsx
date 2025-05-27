@@ -1,22 +1,32 @@
 "use client";
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from "axios";
 import { useStory } from "@/contexts/StoryContext";
 import LZString from 'lz-string';
 
 const GENRES = ["Fantasy", "Sci-Fi", "Mystery", "Romance"];
+const ART_STYLES = ["Realistic", "Watercolor", "Cyberpunk", "Anime"];
 
 const StoryForm = () => {
     const router = useRouter();
     const { setStory } = useStory();
     const [prompt, setPrompt] = useState<string>("");
     const [genre, setGenre] = useState<typeof GENRES[number]>("Fantasy");
+    const [artStyle, setArtStyle] = useState<typeof ART_STYLES[number]>("Realistic");
     const [pageCount, setPageCount] = useState(10);
+    const [inputValue, setInputValue] = useState(String(pageCount));
     const [loading, setLoading] = useState<boolean>(false);
 
-    const generateStory = useCallback(async () => {
+    // clamp to [5,20]
+    function normalize(v: number) {
+      if (v < 5) return 5;
+      if (v > 20) return 20;
+      return v;
+    }
+
+    const generateStory = async () => {
         try {
           setLoading(true);
     
@@ -30,8 +40,7 @@ const StoryForm = () => {
           console.log(paragraphs);
           console.log(imagePrompts);
     
-          const { data: imageData } = await axios.post("/api/generate/images", { allImagePrompts: [title, ...imagePrompts] });
-          console.log("HEREREERER", imageData);
+          const { data: imageData } = await axios.post("/api/generate/images", { artStyle, allImagePrompts: [title, ...imagePrompts] });
 
           const images = imageData.images;
 
@@ -42,9 +51,8 @@ const StoryForm = () => {
           //   })
           // );
 
-          console.log("in here", images);
+          console.log(images);
         
-    
           setStory({
             title, 
             paragraphs, 
@@ -56,15 +64,15 @@ const StoryForm = () => {
         } catch (err) {
           console.error("Error generating story:", err);
         } finally {
-            setLoading(false);
+          setLoading(false);
         }
-      }, [prompt, genre, pageCount, setStory, router]);
+      }
 
   return (
     <div className="flex flex-col w-full max-w-2xl mx-auto">
       {/* Prompt */}
       <textarea
-        className="border-2 border-gray-300 bg-white rounded-md p-2 mb-4 w-full h-40 resize-none"
+        className="border-2 border-gray-300 bg-white rounded-md px-3 py-2 mb-4 w-full h-40 resize-none"
         placeholder="Enter your story prompt"
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
@@ -90,19 +98,49 @@ const StoryForm = () => {
           ))}
         </fieldset>
 
+        {/* Art Style */}
+        <fieldset className="flex items-center space-x-3">
+          <legend className="font-medium">Art Style:</legend>
+          {ART_STYLES.map((a) => (
+            <label key={a} className="inline-flex items-center space-x-1">
+              <input
+                type="radio"
+                name="artStyle"
+                value={a}
+                checked={artStyle === a}
+                onChange={() => setArtStyle(a)}
+                className="h-4 w-4 text-indigo-600 border-gray-300"
+              />
+              <span>{a}</span>
+            </label>
+          ))}
+        </fieldset>
+
         {/* Page Count */}
         <div className="flex items-center space-x-2">
           <label htmlFor="pageCount" className="font-medium">
-            Page(s):
+            Pages:
           </label>
           <input
             id="pageCount"
             type="number"
-            min={1}
+            min={5}
             max={20}
-            value={pageCount}
-            onChange={(e) => setPageCount(Number(e.target.value) | 1)}
-            className="border-2 border-gray-300 rounded-md p-2 w-20 text-center"
+            value={inputValue}
+            onChange={(e) => {
+              // strip out any nondigits
+              const raw = e.target.value.replace(/\D/g, '');
+              setInputValue(raw);
+            }}
+            onBlur={() => {
+              // once the user leaves the field, interpret+clamp
+              let n = parseInt(inputValue, 10);
+              if (isNaN(n)) n = pageCount; // if they left it blank, keep old
+              n = normalize(n);
+              setPageCount(n);
+              setInputValue(String(n));
+            }}
+            className="border-2 border-gray-300 rounded-md bg-white p-2 w-20 text-center"
           />
         </div>
       </div>

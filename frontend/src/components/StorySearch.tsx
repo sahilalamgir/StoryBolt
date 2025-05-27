@@ -8,7 +8,7 @@ const GENRES = ["All", "Fantasy", "Sci-Fi", "Mystery", "Romance"];
 
 const StorySearch = ({ query, genre, type }: { query?: string, genre?: string, type: string }) => {
   return (
-    <Form action={(type === 'saved') ? "/saved" : "/community"} scroll={false} id='search-form' className="max-w-xl w-full bg-white border-2 border-gray-300 rounded-full text-[16px] mt-6 mb-10 flex items-center space-x-2">
+    <Form action={`/${type}`} scroll={false} id='search-form' className="max-w-xl w-full bg-white border-2 border-gray-300 rounded-full text-[16px] mt-6 mb-10 flex items-center space-x-2">
         <input 
             name="query"
             defaultValue={query}
@@ -30,7 +30,7 @@ const StorySearch = ({ query, genre, type }: { query?: string, genre?: string, t
         </select>
 
         <div className='flex items-center space-x-2'>
-            {(query || genre) && <StorySearchReset />}
+            {(query || genre) && <StorySearchReset type={type} />}
 
             <Button type="submit" className='bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-indigo-500 hover:to-pink-500 text-white rounded-full p-2'>
                 <Search className='size-5' />
