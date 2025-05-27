@@ -89,7 +89,10 @@ const Page = ({ params }: { params: { id: string } }) => {
     if (!client) return;
     const { error } = await client
       .from('books')
-      .update({ published: true })
+      .update({ 
+        published: true,
+        published_at: new Date().toISOString(),
+      })
       .eq('id', id);
     if (error) {
       console.error("Publish error:", error);

@@ -28,11 +28,13 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
                 if (type === 'favorited') {
                     const { data: favoriteData, error: favoriteError } = await client
                         .from("favorites")
-                        .select("book_id")
-                        .eq("user_id", user.id);
+                        .select("book_id, favorited_at")
+                        .eq("user_id", user.id)
+                        .order("favorited_at", { ascending: false });
                     if (favoriteError) {
                         console.error(favoriteError);
                     }
+                    console.log("favoritess", favoriteData)
                     builder = client
                         .from("books")
                         .select("id, title, genre, cover_image")
@@ -42,9 +44,13 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
                         .from("books")
                         .select("id, title, genre, cover_image");
                     if (type === 'community') {
-                        builder = builder.eq("published", true);
+                        builder = builder
+                            .eq("published", true)
+                            .order("published_at", { ascending: false });
                     } else {
-                        builder = builder.eq("user_id", user.id);
+                        builder = builder
+                            .eq("user_id", user.id)
+                            .order("created_at", { ascending: false });
                     }
                 }
           

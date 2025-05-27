@@ -9,6 +9,7 @@ import {
   } from "@/components/ui/carousel"
 import Story from '@/types/story';
 import Image from 'next/image';
+import AudioButton from './AudioButton';
 
 const Storybook = ({ story }: { story: Story }) => {
   return (
@@ -25,6 +26,7 @@ const Storybook = ({ story }: { story: Story }) => {
                         <Image className="rounded-t-lg w-full" src={story.images[i]} alt={`Story Line ${i}`} width={512} height={512} />
                         <p className="p-4">{paragraph}</p>
                         <p className="p-4 text-center text-gray-500">Page {i + 1} of {story.paragraphs.length + 1}</p>
+                        <AudioButton text={paragraph} />
                       </CardContent>
                   </Card>
                 </CarouselItem>
