@@ -45,7 +45,7 @@ const Features = () => {
           </div>
           <div>
             <h3 className="text-xl font-semibold mb-2 text-gray-800">Endless Possibilities</h3>
-            <p className="text-gray-600">From fantasy to sci-fi, children's stories to mysteries - our platform adapts to any genre or theme you desire.</p>
+            <p className="text-gray-600">From fantasy to sci-fi, children&apos;s stories to mysteries - our platform adapts to any genre or theme you desire.</p>
           </div>
         </div>
         <div className="flex items-start p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl shadow-md hover:shadow-lg transition">

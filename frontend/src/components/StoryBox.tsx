@@ -5,10 +5,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from 'next/link';
 import { useSession, useUser } from '@clerk/nextjs'
 import createClerkSupabaseClient from '@/lib/supabase';
+import Image from 'next/image';
 
 const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type: string }) => {
     const { session, isLoaded: sessionLoaded } = useSession();
-    const { user, isLoaded: userLoaded } = useUser();
+    const { user } = useUser();
     const [stories, setStories] = useState<{ id: string, title: string, genre: string, cover_image: string }[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -27,9 +28,9 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
                   .from("books")
                   .select("id, title, genre, cover_image");
                 
-                if (type === 'saved') {
+                if (type === 'favorited') {
                     builder = builder
-                    .eq("saved", true)
+                    .eq("favorited", true)
                     .eq("user_id", user.id);
                 } else if (type === 'community') {
                     builder = builder.eq("published", true);
@@ -58,7 +59,7 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
             }
         }
         fetchStories();
-    }, [client, query, genre]);
+    }, [type, user, client, query, genre]);
 
     if (loading)  return <p>Loading…</p>;
     if (!stories.length) return <p>No matching stories.</p>;
@@ -69,7 +70,7 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
             <Link key={s.id} href={`/story/${s.id}`}>
                 <Card className="p-0">
                 <CardContent className="p-0 flex flex-col">
-                    <img className="rounded-t-lg w-full" src={s.cover_image} alt="" />
+                    <Image className="rounded-t-lg w-full" src={s.cover_image} alt={`Story ${s.id}`} width={512} height={512} />
                     <div className="p-4 pb-0 overflow-hidden min-h-[4rem]">
                         <p className="m-0 leading-tight">{s.title}</p>
                     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from '@clerk/nextjs';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 
@@ -40,7 +41,7 @@ const Hero = () => {
               <div className="absolute -right-4 top-0 w-72 h-72 rounded-xl shadow-xl overflow-hidden transform rotate-3 bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-200">
                 <div className="p-4 h-full flex flex-col">
                   <div className="h-40 bg-gradient-to-r from-purple-300 to-indigo-300 rounded-lg mb-4">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/500px-Image_created_with_a_mobile_phone.png" alt="Hero Image 1" className="w-full h-full object-cover rounded-md" />
+                  <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/500px-Image_created_with_a_mobile_phone.png" alt="Hero Image 1" className="w-full h-full object-cover rounded-md" width={512} height={512} />
                   </div>
                   <div className="space-y-2">
                     <div className="h-3 bg-purple-200 rounded w-3/4"></div>
@@ -52,7 +53,7 @@ const Hero = () => {
               <div className="absolute left-4 bottom-0 w-72 h-72 rounded-xl shadow-xl overflow-hidden transform -rotate-6 bg-gradient-to-br from-pink-100 to-purple-100 border border-pink-200">
                 <div className="p-4 h-full flex flex-col">
                   <div className="h-40 bg-gradient-to-r from-pink-300 to-purple-300 rounded-lg mb-4">
-                    <img src="https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-800x525.jpg" alt="Hero Image 2" className="w-full h-full object-cover rounded-md" />
+                    <Image src="https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-800x525.jpg" alt="Hero Image 2" className="w-full h-full object-cover rounded-md" width={512} height={512} />
                   </div>
                   <div className="space-y-2">
                     <div className="h-3 bg-pink-200 rounded"></div>

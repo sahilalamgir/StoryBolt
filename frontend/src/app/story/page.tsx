@@ -53,7 +53,7 @@ export default function StoryPage() {
           genre:       story.genre,
           page_count:  story.paragraphs.length,
           cover_image: story.images[0],
-          saved:       false,
+          favorited:   false,
           published:   false,
         })
         .select('id')
@@ -75,27 +75,27 @@ export default function StoryPage() {
       const { error: pagesErr } = await client.from('pages').insert(pages);
       if (pagesErr) console.error("Error inserting pages:", pagesErr);
     })();
-  }, [client, userLoaded, story]);
+  }, [client, user, userLoaded, story]);
 
-  // 2) “Save” (favorite) handler
-  const saveStory = useCallback(async () => {
+  // 2) Favorite handler
+  const favoriteStory = useCallback(async () => {
     if (!client || !bookId) return;
-    const { data, error } = await client
+    const { error } = await client
       .from('books')
-      .update({ saved: true })
+      .update({ favorited: true })
       .eq('id', bookId);
     if (error) {
-      console.error("Save error:", error);
-      alert("Could not save story.");
+      console.error("Favorite error:", error);
+      alert("Could not favorite story.");
     } else {
-      alert("Story saved!");
+      alert("Story favorited!");
     }
   }, [client, bookId]);
 
   // 3) Publish handler
   const publishStory = useCallback(async () => {
     if (!client || !bookId) return;
-    const { data, error } = await client
+    const { error } = await client
       .from('books')
       .update({ published: true })
       .eq('id', bookId);
@@ -114,11 +114,11 @@ export default function StoryPage() {
 
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
         <button
-          onClick={saveStory}
+          onClick={favoriteStory}
           className="bg-white border-2 border-indigo-600 text-indigo-600
                      font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 transition"
         >
-          Save Story
+          Favorite Story
         </button>
 
         <button

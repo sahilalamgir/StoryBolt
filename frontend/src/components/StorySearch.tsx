@@ -4,7 +4,7 @@ import StorySearchReset from './StorySearchReset';
 import { Search } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 
-const GENRES = ["All", "Fantasy", "Sci-Fi", "Mystery", "Romance"];
+const GENRES = ["All", "Fantasy", "Sci-Fi", "Mystery", "Romance", "Comedy", "Action", "Adventure", "Horror", "Drama", "Fairy Tale"];
 
 const StorySearch = ({ query, genre, type }: { query?: string, genre?: string, type: string }) => {
   return (
@@ -30,7 +30,7 @@ const StorySearch = ({ query, genre, type }: { query?: string, genre?: string, t
         </select>
 
         <div className='flex items-center space-x-2'>
-            {(query || genre) && <StorySearchReset type={type} />}
+            {(query || (genre && genre !== "All")) && <StorySearchReset type={type} />}
 
             <Button type="submit" className='bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-indigo-500 hover:to-pink-500 text-white rounded-full p-2'>
                 <Search className='size-5' />

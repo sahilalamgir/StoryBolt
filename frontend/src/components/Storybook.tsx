@@ -8,6 +8,7 @@ import {
     CarouselPrevious,
   } from "@/components/ui/carousel"
 import Story from '@/types/story';
+import Image from 'next/image';
 
 const Storybook = ({ story }: { story: Story }) => {
   return (
@@ -21,7 +22,7 @@ const Storybook = ({ story }: { story: Story }) => {
                 <CarouselItem key={i}>
                   <Card className="p-0">
                       <CardContent className="p-0 flex flex-col">
-                        <img className="rounded-t-lg w-full" src={story.images[i]} alt={`Story Line ${i}`} />
+                        <Image className="rounded-t-lg w-full" src={story.images[i]} alt={`Story Line ${i}`} width={512} height={512} />
                         <p className="p-4">{paragraph}</p>
                         <p className="p-4 text-center text-gray-500">Page {i + 1} of {story.paragraphs.length + 1}</p>
                       </CardContent>

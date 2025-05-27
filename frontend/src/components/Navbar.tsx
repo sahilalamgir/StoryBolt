@@ -30,7 +30,7 @@ const Navbar = () => {
             <div className="flex gap-6 items-center">
               <Link href="/" className="text-gray-700 hover:text-purple-600 transition">Home</Link>
               <Link href="/history" className="text-gray-700 hover:text-purple-600 transition">History</Link>
-              <Link href="/saved" className="text-gray-700 hover:text-purple-600 transition">Saved</Link>
+              <Link href="/favorited" className="text-gray-700 hover:text-purple-600 transition">Favorited</Link>
               <Link href="/community" className="text-gray-700 hover:text-purple-600 transition">Community</Link>
               
               {isLoaded && (
