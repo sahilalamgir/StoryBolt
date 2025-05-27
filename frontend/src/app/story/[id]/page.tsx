@@ -1,16 +1,22 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, use } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import Storybook from '@/components/Storybook';
-import { useSession, useUser } from '@clerk/nextjs'
+import { useSession } from '@clerk/nextjs'
 import createClerkSupabaseClient from '@/lib/supabase';
-import Story from '@/types/story';
 import { defaultStory } from '@/contexts/StoryContext';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
-const page = ({ params }: { params: { id: string } }) => {
+const Page = ({ params }: { params: { id: string } }) => {
+    const router = useRouter();
+
     const { id } = params;
+    const searchParams = useSearchParams();
+  const type = searchParams.get('type');
+  console.log("type is", type);
+
     const { session, isLoaded: sessionLoaded } = useSession();
-  const { user, isLoaded: userLoaded } = useUser();
   const [story, setStory] = useState<{ title: string, genre: string, images: string[], paragraphs: string[] }>(defaultStory);
   const [loading, setLoading] = useState(true);
 
@@ -61,14 +67,91 @@ const page = ({ params }: { params: { id: string } }) => {
     }
     fetchStory();
   }, [client, id]);
+
+    // 1) Favorite handler
+  const favoriteStory = useCallback(async () => {
+    if (!client) return;
+    const { error } = await client
+      .from('books')
+      .update({ favorited: true })
+      .eq('id', id);
+    if (error) {
+      console.error("Favorite error:", error);
+      alert("Could not favorite story.");
+    } else {
+      alert("Story favorited!");
+    }
+  }, [client, id]);
+
+  // 2) Publish handler
+  const publishStory = useCallback(async () => {
+    if (!client) return;
+    const { error } = await client
+      .from('books')
+      .update({ published: true })
+      .eq('id', id);
+    if (error) {
+      console.error("Publish error:", error);
+      alert("Could not publish story.");
+    } else {
+      alert("Story published!");
+    }
+  }, [client, id]);
+
+    // 3) Unfavorite handler
+    const unfavoriteStory = useCallback(async () => {
+        if (!client) return;
+        const { error } = await client
+        .from('books')
+        .update({ favorited: false })
+        .eq('id', id);
+        if (error) {
+            console.error("Unfavorite error:", error);
+            alert("Could not unfavorite story.");
+        } else {
+            alert("Story unfavorited!");
+        }
+        router.push(`/${type}`);
+    }, [client, id, type, router]);
+
   return (
     <div className="flex flex-col items-center min-h-screen pt-32 pb-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
         {loading 
             ? <p>Loading...</p>
-            : <Storybook story={ story } />
+            : <>
+                <Storybook story={ story } />
+                {(type === "history")
+                    ? <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                        <button
+                        onClick={favoriteStory}
+                        className="bg-white border-2 border-indigo-600 text-indigo-600
+                                    font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 transition"
+                        >
+                        Favorite Story
+                        </button>
+                
+                        <button
+                        onClick={publishStory}
+                        className="bg-gradient-to-r from-purple-600 to-indigo-600
+                                    text-white font-bold py-3 px-8 rounded-xl shadow-lg
+                                    hover:shadow-xl transform transition hover:-translate-y-1"
+                        >
+                        Publish Story
+                        </button>
+                      </div>
+                    : <button
+                        onClick={unfavoriteStory}
+                        className="bg-white border-2 border-indigo-600 text-indigo-600
+                                    font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 transition"
+                        >
+                        Unfavorite Story
+                      </button>
+                    }
+                
+              </>
         }
     </div>
   )
 }
 
-export default page
+export default Page

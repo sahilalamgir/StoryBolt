@@ -67,15 +67,15 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
     return (
         <ul className="grid grid-cols-4 gap-4 w-[80%]">
             {stories.map(s => (
-            <Link key={s.id} href={`/story/${s.id}`}>
+            <Link key={s.id} href={`/story/${s.id}?type=${type}`}>
                 <Card className="p-0">
-                <CardContent className="p-0 flex flex-col">
-                    <Image className="rounded-t-lg w-full" src={s.cover_image} alt={`Story ${s.id}`} width={512} height={512} />
-                    <div className="p-4 pb-0 overflow-hidden min-h-[4rem]">
-                        <p className="m-0 leading-tight">{s.title}</p>
-                    </div>
-                    <p className="p-4 text-center text-gray-500">{s.genre}</p>
-                </CardContent>
+                    <CardContent className="p-0 flex flex-col">
+                        <Image className="rounded-t-lg w-full" src={s.cover_image} alt={`Story ${s.id}`} width={512} height={512} />
+                        <div className="p-4 pb-0 overflow-hidden min-h-[4rem]">
+                            <p className="m-0 leading-tight">{s.title}</p>
+                        </div>
+                        <p className="p-4 text-center text-gray-500">{s.genre}</p>
+                    </CardContent>
                 </Card>
             </Link>
             ))}
