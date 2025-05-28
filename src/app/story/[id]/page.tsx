@@ -134,10 +134,14 @@ const Page = () => {
                       </div>
                 }
                 {(type === "favorited") &&
-                    <UnfavoriteButton unfavoriteFunction={unfavoriteStory} />
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                        <UnfavoriteButton unfavoriteFunction={unfavoriteStory} />
+                    </div>
                 }
                 {(type === "community") &&
-                    <FavoriteButton favoriteFunction={favoriteStory} />
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                        <FavoriteButton favoriteFunction={favoriteStory} />
+                    </div>
                 }
             </>
         }

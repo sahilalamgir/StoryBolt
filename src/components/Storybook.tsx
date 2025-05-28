@@ -9,6 +9,7 @@ import {
   } from "@/components/ui/carousel"
 import Story from '@/types/story';
 import Image from 'next/image';
+import DownloadButton from '@/components/DownloadButton';
 import AudioButton from './AudioButton';
 import { Star } from 'lucide-react';
 
@@ -27,6 +28,7 @@ const Storybook = ({ story, stars }: { story: Story, stars: string }) => {
                     <Star size={20} className="text-yellow-400" fill="currentColor" />
                 </div>
             )}
+            <DownloadButton story={story} />
         </div>
         <Carousel className="w-full max-w-xl mt-6 mb-8">
             <CarouselContent>
