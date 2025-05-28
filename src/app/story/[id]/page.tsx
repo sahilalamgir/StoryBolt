@@ -5,16 +5,14 @@ import Storybook from '@/components/Storybook';
 import { useSession } from '@clerk/nextjs'
 import createClerkSupabaseClient from '@/lib/supabase';
 import { defaultStory } from '@/contexts/StoryContext';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import FavoriteButton from '@/components/FavoriteButton';
 import UnfavoriteButton from '@/components/UnfavoriteButton';
 import PublishButton from '@/components/PublishButton';
 
-const Page = ({ params }: { params: { id: string } }) => {
+const Page = () => {
     const router = useRouter();
-
-    const { id } = params;
+    const { id } = useParams();
     const searchParams = useSearchParams();
   const type = searchParams.get('type');
   const stars = searchParams.get('stars');
