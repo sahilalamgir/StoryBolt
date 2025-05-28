@@ -19,6 +19,7 @@ const Page = ({ params }: { params: { id: string } }) => {
   const type = searchParams.get('type');
   const stars = searchParams.get('stars');
   console.log("type is", type);
+  console.log("stars is", stars);
 
     const { session, isLoaded: sessionLoaded } = useSession();
   const [story, setStory] = useState<{ title: string, genre: string, images: string[], paragraphs: string[] }>(defaultStory);
