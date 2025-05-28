@@ -11,7 +11,7 @@ const Testimonials = () => {
               </span>
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Join thousands of satisfied storytellers who've discovered the magic of AI-powered creativity
+              Join thousands of satisfied storytellers who&apos;ve discovered the magic of AI-powered creativity
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -23,7 +23,7 @@ const Testimonials = () => {
                   <p className="text-sm text-gray-500">Elementary School Teacher</p>
                 </div>
               </div>
-              <p className="text-gray-600 mb-6">"I use StoryForge to create personalized stories for my students. They love seeing themselves as heroes in these incredible adventures! It's made reading time the highlight of our day."</p>
+              <p className="text-gray-600 mb-6">&quot;I use StoryForge to create personalized stories for my students. They love seeing themselves as heroes in these incredible adventures! It&apos;s made reading time the highlight of our day.&quot;</p>
               <div className="flex text-purple-500">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
@@ -40,7 +40,7 @@ const Testimonials = () => {
                   <p className="text-sm text-gray-500">Parent of Three</p>
                 </div>
               </div>
-              <p className="text-gray-600 mb-6">"My kids look forward to our bedtime stories every night now! I generate a new adventure with them as the main characters. The illustrations are beautiful and keep them engaged throughout."</p>
+              <p className="text-gray-600 mb-6">&quot;My kids look forward to our bedtime stories every night now! I generate a new adventure with them as the main characters. The illustrations are beautiful and keep them engaged throughout.&quot;</p>
               <div className="flex text-purple-500">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
@@ -57,7 +57,7 @@ const Testimonials = () => {
                   <p className="text-sm text-gray-500">Professional Writer</p>
                 </div>
               </div>
-              <p className="text-gray-600 mb-6">"As a writer, I use StoryForge to overcome creative blocks. The AI gives me fresh ideas, and the images help visualize new settings and characters. It's become an essential part of my creative process."</p>
+              <p className="text-gray-600 mb-6">&quot;As a writer, I use StoryForge to overcome creative blocks. The AI gives me fresh ideas, and the images help visualize new settings and characters. It&apos;s become an essential part of my creative process.&quot;</p>
               <div className="flex text-purple-500">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">

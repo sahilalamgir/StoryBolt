@@ -1,7 +1,5 @@
 import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
-import LZString from 'lz-string'
-import pLimit from 'p-limit'
 
 export async function POST(req: NextRequest) {
   try {
