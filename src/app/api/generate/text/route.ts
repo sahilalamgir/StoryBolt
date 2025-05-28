@@ -26,8 +26,8 @@ Example of the exact shape (for a page count of 3):
         const response = await axios.get(`https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`);
         console.log(response.data);
         return NextResponse.json(response.data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(err);
-        return NextResponse.json({ error: `Internal Server Error: ${err}` }, { status: 500 });
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'An unknown error occurred' }, { status: 500 });
       }
 }
