@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useSession, useUser } from '@clerk/nextjs'
 import createClerkSupabaseClient from '@/lib/supabase';
 import Image from 'next/image';
+import { Star } from 'lucide-react';
 
 const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type: string }) => {
     const { session, isLoaded: sessionLoaded } = useSession();
@@ -97,7 +98,9 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
                         </div>
                         <div className="p-4 flex justify-between items-center">
                             <p className="text-gray-500">{s.genre}</p>
-                            <p className="text-gray-500">❤️ {s.stars}</p>
+                            <div className="flex items-center gap-1">
+                                {s.stars} <Star size={18} className="text-yellow-400" fill="currentColor" />
+                            </div>
                         </div>
                     </CardContent>
                 </Card>

@@ -24,7 +24,7 @@ const Navbar = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center">
               <Link className="text-2xl font-bold bg-gradient-to-r from-purple-700 to-indigo-500 bg-clip-text text-transparent" href="/">
-                StoryForge AI
+                StoryForge
               </Link>
             </div>
             <div className="flex gap-6 items-center">
