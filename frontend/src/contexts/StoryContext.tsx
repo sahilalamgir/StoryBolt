@@ -24,7 +24,7 @@ export const StoryProvider = ({ children }: { children: React.ReactNode }) => {
     const [story, setStory] = useState<Story>(defaultStory);
     return (
         <StoryContext.Provider value={{ story, setStory }}>
-        {children}
+            {children}
         </StoryContext.Provider>
     );
 };

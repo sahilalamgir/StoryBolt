@@ -11,11 +11,14 @@ import Story from '@/types/story';
 import Image from 'next/image';
 import AudioButton from './AudioButton';
 
-const Storybook = ({ story }: { story: Story }) => {
+const Storybook = ({ story, stars }: { story: Story, stars: string }) => {
   return (
     <>
         <h1 className="text-3xl md:text-4xl font-bold mb-6 leading-tight bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent">
             {story.title}
+            {(stars) &&
+               <> | {stars} Stars</>
+            }
         </h1>
         <Carousel className="w-full max-w-xl mb-8">
             <CarouselContent>

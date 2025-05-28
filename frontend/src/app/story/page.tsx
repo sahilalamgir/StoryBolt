@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useStory } from "@/contexts/StoryContext";
 import { useSession, useUser } from '@clerk/nextjs';
 import createClerkSupabaseClient from '@/lib/supabase';
-import Story from '@/components/Storybook';
+import Storybook from '@/components/Storybook';
 
 export default function StoryPage() {
   const { story } = useStory();
@@ -111,7 +111,7 @@ export default function StoryPage() {
   return (
     <div className="flex flex-col items-center min-h-screen pt-32 pb-20
                     bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      <Story story={story} />
+      <Storybook story={story} stars="" />
 
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
         <button

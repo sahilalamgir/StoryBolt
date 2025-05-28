@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { Button } from "./ui/button";
+import { Headphones } from 'lucide-react';
 
 export default function AudioButton({ text }: { text: string }) {
   const playAudio = useCallback(async () => {
@@ -32,5 +33,7 @@ export default function AudioButton({ text }: { text: string }) {
         active:from-indigo-700 
         active:to-pink-700 
         transition-all 
-        duration-200" onClick={playAudio}>🎧 Play Audio</Button>;
+        duration-200" onClick={playAudio}>
+          <Headphones /> Play Audio
+          </Button>;
 }

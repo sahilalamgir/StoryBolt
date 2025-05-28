@@ -10,7 +10,7 @@ import Image from 'next/image';
 const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type: string }) => {
     const { session, isLoaded: sessionLoaded } = useSession();
     const { user } = useUser();
-    const [stories, setStories] = useState<{ id: string, title: string, genre: string, cover_image: string }[]>([]);
+    const [stories, setStories] = useState<{ id: string, title: string, genre: string, cover_image: string, stars: number }[]>([]);
     const [loading, setLoading] = useState(true);
 
     const client = useMemo(() => {
@@ -37,12 +37,12 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
                     console.log("favoritess", favoriteData)
                     builder = client
                         .from("books")
-                        .select("id, title, genre, cover_image")
+                        .select("id, title, genre, cover_image, favorites!book_id (count)")
                         .in("id", favoriteData?.map(f => f.book_id) || []);
                 } else {
                     builder = client
                         .from("books")
-                        .select("id, title, genre, cover_image");
+                        .select("id, title, genre, cover_image, favorites!book_id (count)");
                     if (type === 'community') {
                         builder = builder
                             .eq("published", true)
@@ -66,7 +66,12 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
                 if (error) {
                   console.error(error);
                 } else {
-                  setStories(data);
+                    // Transform the data to include the favorite count
+                    const transformedData = data.map(book => ({
+                        ...book,
+                        stars: book.favorites?.[0]?.count || 0
+                    }));
+                    setStories(transformedData);
                 }
             } catch (err) {
                 console.error(err);
@@ -83,14 +88,17 @@ const StoryBox = ({ query, genre, type }: { query?: string, genre?: string, type
     return (
         <ul className="grid grid-cols-4 gap-4 w-[80%]">
             {stories.map(s => (
-            <Link key={s.id} href={`/story/${s.id}?type=${type}`}>
+            <Link key={s.id} href={`/story/${s.id}?type=${type}&stars=${s.stars}`}>
                 <Card className="p-0">
                     <CardContent className="p-0 flex flex-col">
                         <Image className="rounded-t-lg w-full" src={s.cover_image} alt={`Story ${s.id}`} width={512} height={512} />
                         <div className="p-4 pb-0 overflow-hidden min-h-[4rem]">
                             <p className="m-0 leading-tight">{s.title}</p>
                         </div>
-                        <p className="p-4 text-center text-gray-500">{s.genre}</p>
+                        <div className="p-4 flex justify-between items-center">
+                            <p className="text-gray-500">{s.genre}</p>
+                            <p className="text-gray-500">❤️ {s.stars}</p>
+                        </div>
                     </CardContent>
                 </Card>
             </Link>
