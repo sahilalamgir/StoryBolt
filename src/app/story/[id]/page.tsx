@@ -8,13 +8,16 @@ type SignedInSessionResource = NonNullable<
   ReturnType<typeof useSession>['session']
 >;
 
-export default async function StoryPage({ params, searchParams }: {
-  params: Promise<{ id: string }>,
-  searchParams: { type?: string, stars?: string }
-}) {
-  const { id } = await params;
+type PageProps = {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
 
-  // 1) Grab Clerk’s session (with cookies) on the server
+export default async function StoryPage({ 
+  params, 
+  searchParams 
+}: PageProps) {
+  // 1) Grab Clerk's session (with cookies) on the server
   const { getToken } = await auth();
   // 2) Spin up your Clerk-aware Supabase client
   const client = createClerkSupabaseClient({
@@ -26,7 +29,7 @@ export default async function StoryPage({ params, searchParams }: {
   const { data: book, error: bookErr } = await client
     .from("books")
     .select("title, genre, cover_image, user_id")
-    .eq("id", id)
+    .eq("id", params.id)
     .maybeSingle();
 
   if (bookErr || !book) {
@@ -38,7 +41,7 @@ export default async function StoryPage({ params, searchParams }: {
   const { data: pages, error: pagesErr } = await client
     .from("pages")
     .select("text_content, image_path")
-    .eq("book_id", id);
+    .eq("book_id", params.id);
 
   if (pagesErr || !pages) {
     return <p>Couldn&apos;t load pages.</p>;
@@ -52,11 +55,14 @@ export default async function StoryPage({ params, searchParams }: {
     paragraphs: pages.map(p => p.text_content),
   };
 
+  const type = typeof searchParams.type === 'string' ? searchParams.type : undefined;
+  const stars = typeof searchParams.stars === 'string' ? searchParams.stars : "0";
+
   // 6) Render it, passing query-params down to your client buttons
   return (
     <div className="flex flex-col items-center min-h-screen pt-32 pb-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      <Storybook story={story} stars={searchParams.stars ?? "0"} />
-      <StoryActions bookId={id} type={searchParams.type} authorId={book.user_id} />
+      <Storybook story={story} stars={stars} />
+      <StoryActions bookId={params.id} type={type} authorId={book.user_id} />
     </div>
   )
 }
