@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link';
 
 const Footer = () => {
   return (
@@ -7,11 +8,11 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center mb-8">
             <h3 className="text-2xl font-bold mb-4 md:mb-0 bg-gradient-to-r from-indigo-300 to-purple-200 bg-clip-text text-transparent">StoryBolt</h3>
             <div className="flex gap-6">
-              <a href="#features" className="text-indigo-200 hover:text-white transition">Features</a>
-              <a href="#how-it-works" className="text-indigo-200 hover:text-white transition">How It Works</a>
-              <a href="#testimonials" className="text-indigo-200 hover:text-white transition">Testimonials</a>
-              <a href="#" className="text-indigo-200 hover:text-white transition">Privacy</a>
-              <a href="#" className="text-indigo-200 hover:text-white transition">Terms</a>
+              <Link href="/#features" className="text-indigo-200 hover:text-white transition">Features</Link>
+              <Link href="/#how-it-works" className="text-indigo-200 hover:text-white transition">How It Works</Link>
+              <Link href="/#testimonials" className="text-indigo-200 hover:text-white transition">Testimonials</Link>
+              <Link href="#" className="text-indigo-200 hover:text-white transition">Privacy</Link>
+              <Link href="#" className="text-indigo-200 hover:text-white transition">Terms</Link>
             </div>
           </div>
           <div className="border-t border-indigo-800 pt-8">

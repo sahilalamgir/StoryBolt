@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useStory } from "@/contexts/StoryContext";
 import { useSession, useUser } from '@clerk/nextjs';
 import createClerkSupabaseClient from '@/lib/supabase';
 import Storybook from '@/components/Storybook';
+import StoryActions from '@/components/StoryActions';
 
 export default function StoryPage() {
   const { story } = useStory();
@@ -19,7 +20,7 @@ export default function StoryPage() {
     return createClerkSupabaseClient(session);
   }, [sessionLoaded, session]);
 
-  // 1) On first mount (or when story changes) insert the book+pages exactly once
+  // On first mount (or when story changes) insert the book+pages exactly once
   useEffect(() => {
     if (!client || !userLoaded || hasInserted.current) return;
     if (!story.title) return; // nothing to insert yet
@@ -77,60 +78,11 @@ export default function StoryPage() {
     })();
   }, [client, user, userLoaded, story]);
 
-  // 2) Favorite handler
-  const favoriteStory = useCallback(async () => {
-    if (!client || !bookId) return;
-    const { error } = await client
-      .from('favorites')
-      .insert({
-        book_id: bookId,
-      });
-    if (error) {
-      console.error("Favorite error:", error);
-      alert("Could not favorite story.");
-    } else {
-      alert("Story favorited!");
-    }
-  }, [client, bookId]);
-
-  // 3) Publish handler
-  const publishStory = useCallback(async () => {
-    if (!client || !bookId) return;
-    const { error } = await client
-      .from('books')
-      .update({ published: true })
-      .eq('id', bookId);
-    if (error) {
-      console.error("Publish error:", error);
-      alert("Could not publish story.");
-    } else {
-      alert("Story published!");
-    }
-  }, [client, bookId]);
-
   return (
     <div className="flex flex-col items-center min-h-screen pt-32 pb-20
                     bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <Storybook story={story} stars="" />
-
-      <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-        <button
-          onClick={favoriteStory}
-          className="bg-white border-2 border-indigo-600 text-indigo-600
-                     font-bold py-3 px-8 rounded-xl hover:bg-indigo-50 transition"
-        >
-          Favorite Story
-        </button>
-
-        <button
-          onClick={publishStory}
-          className="bg-gradient-to-r from-purple-600 to-indigo-600
-                     text-white font-bold py-3 px-8 rounded-xl shadow-lg
-                     hover:shadow-xl transform transition hover:-translate-y-1"
-        >
-          Publish Story
-        </button>
-      </div>
+      <StoryActions type="history" bookId={bookId ?? ""} authorId={user!.id} />
     </div>
   );
 }

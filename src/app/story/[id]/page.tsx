@@ -1,4 +1,3 @@
-// app/story/[id]/page.tsx
 import { auth } from "@clerk/nextjs/server";
 import createClerkSupabaseClient from "@/lib/supabase";
 import Storybook from "@/components/Storybook";
@@ -21,13 +20,13 @@ export default async function StoryPage({ params, searchParams }: {
   const { getToken } = await auth();
 
   // 2) Spin up your Clerk-aware Supabase client
-  const client = createClerkSupabaseClient({
+  const supabase = createClerkSupabaseClient({
     // mimic the “session” shape expected by createClerkSupabaseClient
     getToken: () => getToken({ template: "supabase" }),
   } as SignedInSessionResource | null | undefined);
 
   // 3) Fetch the book row; RLS will only let you see it if published=true or user_id=session.userId
-  const { data: book, error: bookErr } = await client
+  const { data: book, error: bookErr } = await supabase
     .from("books")
     .select("title, genre, cover_image, user_id")
     .eq("id", id)
@@ -39,7 +38,7 @@ export default async function StoryPage({ params, searchParams }: {
   }
 
   // 4) Fetch pages
-  const { data: pages, error: pagesErr } = await client
+  const { data: pages, error: pagesErr } = await supabase
     .from("pages")
     .select("text_content, image_path")
     .eq("book_id", id);
