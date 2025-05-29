@@ -9,18 +9,28 @@ type SignedInSessionResource = NonNullable<
   ReturnType<typeof useSession>['session']
 >;
 
-export default async function StoryPage({ 
-  params,
+export default function StoryPage({ 
+  params, 
   searchParams 
 }: {
   params: { id: string },
-  searchParams?: { [key: string]: string | string[] | undefined }
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  return <StoryContent id={params.id} searchParams={searchParams} />;
+}
+
+async function StoryContent({ 
+  id, 
+  searchParams 
+}: { 
+  id: string, 
+  searchParams: { [key: string]: string | string[] | undefined } 
 }) {
   // 1) Grab Clerk's session (with cookies) on the server
   const { getToken } = await auth();
   // 2) Spin up your Clerk-aware Supabase client
   const client = createClerkSupabaseClient({
-    // mimic the “session” shape expected by createClerkSupabaseClient
+    // mimic the "session" shape expected by createClerkSupabaseClient
     getToken: () => getToken({ template: "supabase" }),
   } as SignedInSessionResource | null | undefined);
 
@@ -28,7 +38,7 @@ export default async function StoryPage({
   const { data: book, error: bookErr } = await client
     .from("books")
     .select("title, genre, cover_image, user_id")
-    .eq("id", params.id)
+    .eq("id", id)
     .maybeSingle();
 
   if (bookErr || !book) {
@@ -40,7 +50,7 @@ export default async function StoryPage({
   const { data: pages, error: pagesErr } = await client
     .from("pages")
     .select("text_content, image_path")
-    .eq("book_id", params.id);
+    .eq("book_id", id);
 
   if (pagesErr || !pages) {
     return <p>Couldn&apos;t load pages.</p>;
@@ -54,14 +64,14 @@ export default async function StoryPage({
     paragraphs: pages.map(p => p.text_content),
   };
 
-  const type = searchParams?.type && typeof searchParams.type === 'string' ? searchParams.type : undefined;
-  const stars = searchParams?.stars && typeof searchParams.stars === 'string' ? searchParams.stars : "0";
+  const type = typeof searchParams?.type === 'string' ? searchParams.type : undefined;
+  const stars = typeof searchParams?.stars === 'string' ? searchParams.stars : "0";
 
   // 6) Render it, passing query-params down to your client buttons
   return (
     <div className="flex flex-col items-center min-h-screen pt-32 pb-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <Storybook story={story} stars={stars} />
-      <StoryActions bookId={params.id} type={type} authorId={book.user_id} />
+      <StoryActions bookId={id} type={type} authorId={book.user_id} />
     </div>
   )
 }
