@@ -9,6 +9,8 @@ type SignedInSessionResource = NonNullable<
   ReturnType<typeof useSession>['session']
 >;
 
+export const revalidate = 60;
+
 export default async function StoryPage({ params, searchParams }: {
   params: Promise<{ id: string }>,
   searchParams: Promise<{ type?: string, stars?: string }>
