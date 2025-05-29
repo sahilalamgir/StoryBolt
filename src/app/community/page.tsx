@@ -3,6 +3,8 @@ import { auth } from '@clerk/nextjs/server';
 import { getStories } from '@/lib/getStories';
 import StoryCard from '@/components/StoryCard';
 
+export const revalidate = 60;
+
 const page = async ({ searchParams } : { searchParams: Promise<{ query?: string, genre?: string }> }) => {
     const query = (await searchParams).query;
     const genre = (await searchParams).genre;
