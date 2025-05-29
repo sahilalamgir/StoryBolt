@@ -16,19 +16,21 @@ import { Star } from 'lucide-react';
 const Storybook = ({ story, stars }: { story: Story, stars: string }) => {
   return (
     <>
-        <div className="flex gap-x-5 items-center justify-between">
+        <div className="flex flex-col gap-y-2 items-center justify-between">
             <h1 className="text-3xl md:text-4xl font-bold leading-tight bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent">
                 {story.title}
             </h1>
-            {stars && (
-                <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-sm mt-1 px-4 py-2 rounded-full shadow-sm">
+            <div className="flex flex-row gap-x-5 items-center justify-between">
+                {stars && (
+                    <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-sm mt-1 px-4 py-2 rounded-full shadow-sm">
                     <span className="text-lg font-semibold bg-black bg-clip-text text-transparent">
                         {stars}
                     </span>
                     <Star size={20} className="text-yellow-400" fill="currentColor" />
                 </div>
-            )}
-            <DownloadButton story={story} />
+                )}
+                <DownloadButton story={story} />
+            </div>
         </div>
         <Carousel className="w-full max-w-xl mt-6 mb-8">
             <CarouselContent>

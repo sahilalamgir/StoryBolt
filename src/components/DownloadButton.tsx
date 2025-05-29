@@ -134,9 +134,9 @@ const DownloadButton = ({ story }: DownloadButtonProps) => {
       onClick={generatePDF}
       disabled={isGenerating}
       className={`flex gap-x-1.5 items-center bg-white border-2 
-                border-emerald-600 text-emerald-600
-                font-bold mt-1 py-2.5 px-3 rounded-xl hover:bg-emerald-50 
-                active:bg-emerald-100 transition
+                border-indigo-600 text-indigo-600
+                font-bold mt-1 py-2.5 px-3 rounded-xl hover:bg-indigo-50 
+                active:bg-indigo-100 transition
                 ${isGenerating ? 'opacity-70 cursor-not-allowed' : ''}`}
     >
       <Download size={18} />

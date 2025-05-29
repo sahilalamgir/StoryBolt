@@ -28,7 +28,7 @@ const Hero = () => {
                 <span className="bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">Imagination</span>
               </h1>
               <p className="text-xl mb-8 text-gray-700 leading-relaxed">
-                Transform your ideas into captivating stories with AI-generated text and stunning visuals. Any genre, any topic - your personal storyteller awaits.
+                Transform your ideas into captivating stories with AI-generated text and stunning visuals. Any genre, any topic, your personal storyteller awaits.
               </p>
               <button 
                 onClick={navigateToCreate}

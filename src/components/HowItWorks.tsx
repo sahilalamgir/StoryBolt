@@ -11,14 +11,14 @@ const HowItWorks = () => {
               </span>
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Create your personalized story in just three simple steps
+              Create your personalized story in just three simple steps.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-10">
             <div className="bg-white p-8 rounded-2xl shadow-lg transform transition hover:translate-y-[-5px]">
               <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
               <h3 className="text-xl font-semibold mb-3 text-center text-gray-800">Choose Your Genre</h3>
-              <p className="text-gray-600 text-center">Fantasy, sci-fi, romance, mystery - select any genre that sparks your imagination.</p>
+              <p className="text-gray-600 text-center">Fantasy, sci-fi, romance, mystery, select any genre that sparks your imagination.</p>
             </div>
             <div className="bg-white p-8 rounded-2xl shadow-lg transform transition hover:translate-y-[-5px]">
               <div className="w-16 h-16 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>

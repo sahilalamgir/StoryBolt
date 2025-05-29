@@ -11,7 +11,7 @@ const Showcase = () => {
               </span>
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Take a look at what our AI can create for you
+              Take a look at what our AI can create for you.
             </p>
           </div>
           <div className="relative">
