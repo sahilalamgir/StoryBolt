@@ -4,19 +4,18 @@ import createClerkSupabaseClient from "@/lib/supabase";
 import Storybook from "@/components/Storybook";
 import { useSession } from "@clerk/nextjs";
 import StoryActions from "@/components/StoryActions";
+
 type SignedInSessionResource = NonNullable<
   ReturnType<typeof useSession>['session']
 >;
 
-type PageProps = {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
-
 export default async function StoryPage({ 
-  params, 
+  params,
   searchParams 
-}: PageProps) {
+}: {
+  params: { id: string },
+  searchParams?: { [key: string]: string | string[] | undefined }
+}) {
   // 1) Grab Clerk's session (with cookies) on the server
   const { getToken } = await auth();
   // 2) Spin up your Clerk-aware Supabase client
@@ -55,8 +54,8 @@ export default async function StoryPage({
     paragraphs: pages.map(p => p.text_content),
   };
 
-  const type = typeof searchParams.type === 'string' ? searchParams.type : undefined;
-  const stars = typeof searchParams.stars === 'string' ? searchParams.stars : "0";
+  const type = searchParams?.type && typeof searchParams.type === 'string' ? searchParams.type : undefined;
+  const stars = searchParams?.stars && typeof searchParams.stars === 'string' ? searchParams.stars : "0";
 
   // 6) Render it, passing query-params down to your client buttons
   return (
