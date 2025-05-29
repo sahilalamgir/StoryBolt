@@ -15,7 +15,7 @@ export default function AudioButton({ text }: { text: string }) {
 
       const resp = await fetch(url);
       if (!resp.ok) {
-        throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+        throw new Error(`Failed to generate audio: HTTP ${resp.status}: ${await resp.text()}`);
       }
       if (!resp.headers.get("Content-Type")?.includes("audio/mpeg")) {
         throw new Error("API did not return audio/mpeg");

@@ -1,5 +1,6 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import type { useSession } from '@clerk/nextjs';
+
 type SignedInSessionResource = NonNullable<
   ReturnType<typeof useSession>['session']
 >;
@@ -31,6 +32,14 @@ export default function createClerkSupabaseClient(
               ...options,
               headers,
           })
+        },
+      },
+      auth: {
+        persistSession: false, // Don't persist session since we use Clerk
+      },
+      realtime: {
+        params: {
+          eventsPerSecond: 10, // Limit realtime events
         },
       },
     },

@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { useStory } from "@/contexts/StoryContext";
 
 const GENRES = ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Comedy", "Action", "Adventure", "Horror", "Drama", "Fairy Tale"] as const;
@@ -24,19 +23,32 @@ export default function StoryForm() {
     try {
       setLoading(true);
 
-      const { data: textData } = await axios.post('/api/generate/text', { prompt, genre, pageCount }, {
+      const textData = await fetch('/api/generate/text', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({ prompt, genre, pageCount }),
       });
-      const { title, paragraphs, imagePrompts } = textData;
+      if (!textData.ok) {
+        throw new Error(`Failed to generate text: HTTP ${textData.status}: ${await textData.text()}`);
+      }
+      const { title, paragraphs, imagePrompts } = await textData.json();
       console.log(title);
       console.log(paragraphs);
       console.log(imagePrompts);
 
-      const { data: imageData } = await axios.post("/api/generate/images", { artStyle, allImagePrompts: [title, ...imagePrompts] });
-
-      const images = imageData.images;
+      const imageData = await fetch("/api/generate/images", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ artStyle, allImagePrompts: [title, ...imagePrompts] }),
+      });
+      if (!imageData.ok) {
+        throw new Error(`Failed to generate images: HTTP ${imageData.status}: ${await imageData.text()}`);
+      }
+      const { images } = await imageData.json();
 
       // const images = await Promise.all(
       //   imageData.imageUrls.map(async (imageUrl: string) => {
@@ -45,7 +57,7 @@ export default function StoryForm() {
       //   })
       // );
 
-      console.log(images);
+      console.log("hello", images);
     
       setStory({
         title, 

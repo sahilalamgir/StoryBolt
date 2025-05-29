@@ -1,5 +1,4 @@
 import {  NextResponse } from "next/server";
-import axios from "axios";
 
 export async function POST(req: Request) {
     try {
@@ -23,9 +22,12 @@ Example of the exact shape (for a page count of 3):
 \`\`\`json
 {"title":"A Hero is Born","paragraphs":["First paragraph text here. Second sentence. Third sentence.","Second paragraph text here. Second sentence. Third sentence.","Third paragraph text here. Second sentence. Third sentence."],"imagePrompts":["A boy standing alone under a stormy sky.","A tall castle perched atop a snowy mountain.","A fierce dragon breathing flame over a village at dawn."]}
 `
-        const response = await axios.get(`https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`);
-        console.log(response.data);
-        return NextResponse.json(response.data);
+        const resp = await fetch(`https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`);
+        if (!resp.ok) {
+          throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+        }
+        const data = await resp.json();
+        return NextResponse.json(data);
       } catch (err: unknown) {
         console.error(err);
         return NextResponse.json({ error: err instanceof Error ? err.message : 'An unknown error occurred' }, { status: 500 });
