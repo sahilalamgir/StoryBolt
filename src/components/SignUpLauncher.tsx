@@ -10,7 +10,7 @@ export default function SignUpLauncher() {
   const { openSignUp } = useClerk();
 
   useEffect(() => {
-    if (searchParams.get("openSignUp") === "true") {
+    if (searchParams?.get("openSignUp") === "true") {
       // 1) open the Clerk sign‑in modal
       openSignUp();
 
