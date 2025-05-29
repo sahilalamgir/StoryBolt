@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "StoryForge",
+  title: "StoryBolt",
   description: "Generate your own stories with AI",
 };
 

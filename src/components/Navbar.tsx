@@ -25,7 +25,7 @@ const Navbar = () => {
             <div className="flex items-center">
               <Link className="text-2xl font-bold" href="/">
                 <span className="bg-gradient-to-r from-purple-700 to-indigo-500 bg-clip-text text-transparent">Story</span>
-                <span className="bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">Forge</span>
+                <span className="bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">Bolt</span>
               </Link>
             </div>
             <div className="flex gap-6 items-center">

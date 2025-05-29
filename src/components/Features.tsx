@@ -7,7 +7,7 @@ const Features = () => {
       <div className="text-center mb-16">
         <h2 className="text-4xl font-bold mb-4">
           <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-            Why Choose StoryForge
+            Why Choose StoryBolt
           </span>
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
