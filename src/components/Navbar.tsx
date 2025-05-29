@@ -28,26 +28,31 @@ const Navbar = () => {
               </Link>
             </div>
             <div className="flex gap-6 items-center">
-              <Link href="/" className="text-gray-700 hover:text-purple-600 transition">Home</Link>
-              <Link href="/history" className="text-gray-700 hover:text-purple-600 transition">History</Link>
-              <Link href="/favorited" className="text-gray-700 hover:text-purple-600 transition">Favorited</Link>
-              <Link href="/community" className="text-gray-700 hover:text-purple-600 transition">Community</Link>
-              
               {isLoaded && (
                 isSignedIn ? (
-                  <div className="flex items-center gap-4">
-                    <button 
-                      onClick={() => router.push('/generate')}
-                      className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium py-2 px-4 rounded-full hover:shadow-lg transition"
-                    >
-                      Create Story
-                    </button>
-                    <UserButton />
-                  </div>
+                  <>
+                    <Link href="/" className="text-gray-700 hover:text-purple-600 transition">Home</Link>
+                    <Link href="/history" className="text-gray-700 hover:text-purple-600 transition">History</Link>
+                    <Link href="/favorited" className="text-gray-700 hover:text-purple-600 transition">Favorited</Link>
+                    <Link href="/community" className="text-gray-700 hover:text-purple-600 transition">Community</Link>
+                    <div className="flex items-center gap-4">
+                      <button 
+                        onClick={() => router.push('/generate')}
+                        className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium py-2 px-4 rounded-full hover:shadow-lg transition"
+                      >
+                        Create Story
+                      </button>
+                      <UserButton />
+                    </div>
+                  </>
                 ) : (
-                  <div className="flex items-center gap-2">
-                    <SignInButton mode="modal">
-                      <button className="text-gray-700 hover:text-purple-600 font-medium">
+                  <>
+                    <Link href="/#features" className="text-gray-700 hover:text-purple-600 transition">Features</Link>
+                    <Link href="/#how-it-works" className="text-gray-700 hover:text-purple-600 transition">How It Works</Link>
+                    <Link href="/#testimonials" className="text-gray-700 hover:text-purple-600 transition">Testimonials</Link>
+                    <div className="flex items-center gap-2">
+                      <SignInButton mode="modal">
+                        <button className="text-gray-700 hover:text-purple-600 font-medium">
                         Sign In
                       </button>
                     </SignInButton>
@@ -57,6 +62,7 @@ const Navbar = () => {
                       </button>
                     </SignUpButton>
                   </div>
+                  </>
                 )
               )}
             </div>

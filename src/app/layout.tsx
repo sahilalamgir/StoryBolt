@@ -6,6 +6,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SignUpLauncher from "@/components/SignUpLauncher";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,6 +39,7 @@ export default function RootLayout({
             <SignUpLauncher />
             {children}
             <Footer />
+            <Analytics />
           </StoryProvider>
         </body>
       </html>
