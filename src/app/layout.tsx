@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { StoryProvider } from "@/contexts/StoryContext";
 import { ClerkProvider } from '@clerk/nextjs';
+import QueryProvider from "@/components/QueryProvider";
+import { StoryProvider } from "@/contexts/StoryContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Suspense } from "react";
 import SignUpLauncher from "@/components/SignUpLauncher";
 import { Analytics } from "@vercel/analytics/next"
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,15 +37,17 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <StoryProvider>
-            <Navbar />
-            <Suspense fallback={<div>Loading...</div>}>
+          <QueryProvider>
+            <StoryProvider>
+              <Navbar />
+              <Suspense fallback={<div>Loading...</div>}>
               <SignUpLauncher />
-            </Suspense>
-            {children}
-            <Footer />
-            <Analytics />
-          </StoryProvider>
+              </Suspense>
+              {children}
+              <Footer />
+              <Analytics />
+            </StoryProvider>
+          </QueryProvider>
         </body>
       </html>
     </ClerkProvider>

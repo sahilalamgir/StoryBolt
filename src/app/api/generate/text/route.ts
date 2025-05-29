@@ -20,13 +20,14 @@ Do NOT include trailing commas.
 Example of the exact shape (for a page count of 3):
 
 \`\`\`json
-{"title":"A Hero is Born","paragraphs":["First paragraph text here. Second sentence. Third sentence.","Second paragraph text here. Second sentence. Third sentence.","Third paragraph text here. Second sentence. Third sentence."],"imagePrompts":["A boy standing alone under a stormy sky.","A tall castle perched atop a snowy mountain.","A fierce dragon breathing flame over a village at dawn."]}
-`
+{"title":"A Hero is Born","paragraphs":["First paragraph text here. Second sentence. Third sentence.","Second paragraph text here. Second sentence. Third sentence.","Third paragraph text here. Second sentence. Third sentence."],"imagePrompts":["A boy standing alone under a stormy sky.","A tall castle perched atop a snowy mountain.","A fierce dragon breathing flame over a village at dawn."]}`
         const resp = await fetch(`https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`);
         if (!resp.ok) {
           throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
         }
+        console.log("resp", resp);
         const data = await resp.json();
+        console.log("data", data);
         return NextResponse.json(data);
       } catch (err: unknown) {
         console.error(err);

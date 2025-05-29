@@ -66,8 +66,6 @@ export async function POST(req: NextRequest) {
         // Try to fetch with retry logic
         const data = await fetchWithRetry(url);
         images.push(`data:image/jpeg;base64,${Buffer.from(data).toString('base64')}`);
-        console.log("images", images.map(i => i.substring(0, 100)));
-        console.log("images", images.length);
         
         console.log(`Generated image ${i+1}/${allImagePrompts.length}`);
       } catch (error) {
@@ -77,7 +75,7 @@ export async function POST(req: NextRequest) {
       }
     }
     console.log("images", typeof images, images.length);
-    
+
     
     return NextResponse.json({ images: images });
   } catch (err: unknown) {
