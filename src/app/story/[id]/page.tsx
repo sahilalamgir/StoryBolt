@@ -4,6 +4,8 @@ import createClerkSupabaseClient from "@/lib/supabase";
 import Storybook from "@/components/Storybook";
 import { useSession } from "@clerk/nextjs";
 import StoryActions from "@/components/StoryActions";
+import { notFound } from "next/navigation";
+
 type SignedInSessionResource = NonNullable<
   ReturnType<typeof useSession>['session']
 >;
@@ -32,8 +34,8 @@ export default async function StoryPage({ params, searchParams }: {
     .maybeSingle();
 
   if (bookErr || !book) {
-    // return 404 UI
-    return <p>Story not found.</p>;
+    // Use Next.js not-found mechanism instead of custom UI
+    notFound();
   }
 
   // 4) Fetch pages
@@ -43,7 +45,8 @@ export default async function StoryPage({ params, searchParams }: {
     .eq("book_id", id);
 
   if (pagesErr || !pages) {
-    return <p>Couldn&apos;t load pages.</p>;
+    // Use Next.js not-found mechanism for missing pages too
+    notFound();
   }
 
   // 5) Build the story shape
