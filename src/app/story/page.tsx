@@ -88,7 +88,7 @@ export default function StoryPage() {
     <div className="flex flex-col items-center min-h-screen pt-32 pb-20
                     bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <Storybook story={story} />
-      <StoryActions type="history" bookId={bookId ?? ""} authorId={story.authorId} />
+      <StoryActions bookId={bookId ?? ""} authorId={story.authorId} />
     </div>
   );
 }

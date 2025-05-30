@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useSession } from "@clerk/nextjs";
 import createClerkSupabaseClient from "@/lib/supabase";
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import FavoriteButton from "./FavoriteButton";
 import PublishButton from "./PublishButton";
 import UnfavoriteButton from "./UnfavoriteButton";
@@ -12,18 +12,47 @@ import DeleteButton from "./DeleteButton";
 
 interface Props {
   bookId:   string;
-  type?:    string;
   authorId: string;
 }
 
-export default function StoryActions({ bookId, type, authorId }: Props) {
+export default function StoryActions({ bookId, authorId }: Props) {
   const { session, isLoaded } = useSession();
   const router = useRouter();
+  const [favorited, setFavorited] = useState(false);
+  const [published, setPublished] = useState(false);
 
   const client = useMemo(() => {
     if (!isLoaded) return null;
     return createClerkSupabaseClient(session);
   }, [session, isLoaded]);
+
+  useEffect(() => {
+    if (!client || !bookId) return;
+    const fetchStory = async () => {
+      const { data: bookData, error: bookError } = await client
+        .from('books')
+        .select('favorited, published')
+        .eq('id', bookId)
+        .single();
+      if (bookError || !bookData) {
+        console.error("Fetch error:", bookError);
+        return;
+      }
+      const { data: favoriteData, error: favoriteError } = await client
+        .from('favorites')
+        .select('*')
+        .eq('book_id', bookId)
+        .eq('user_id', session?.user.id)
+        .maybeSingle();
+      if (favoriteError) {
+        console.error("Fetch error:", favoriteError);
+        return;
+      }
+      setFavorited(!!favoriteData);
+      setPublished(bookData.published);
+    };
+    fetchStory();
+  }, [client, bookId, session?.user.id]);
 
   // 1) Favorite handler
   const favoriteStory = useCallback(async () => {
@@ -75,8 +104,8 @@ export default function StoryActions({ bookId, type, authorId }: Props) {
         } else {
             alert("Story unfavorited!");
         }
-        router.push(`/${type}`);
-    }, [client, bookId, type, router]);
+        router.push(`/favorited`);
+    }, [client, bookId, router]);
 
     // 4) Unpublish handler
     const unpublishStory = useCallback(async () => {
@@ -95,54 +124,42 @@ export default function StoryActions({ bookId, type, authorId }: Props) {
     } else {
       alert("Story unpublished!");
     }
-    router.push(`/${type}`);
-    }, [client, bookId, type, router]);
+    router.push(`/community`);
+    }, [client, bookId, router]);
 
     // 5) Delete handler
     const deleteStory = useCallback(async () => {
         if (!client) return;
-        const { error: bookError } = await client
+        const { error } = await client
           .from('books')
           .delete()
           .eq('id', bookId);
-        if (bookError) {
-          console.error("Delete error:", bookError);
+        if (error) {
+          console.error("Delete error:", error);
           alert("Could not delete story.");
           return;
         }
         alert("Story deleted!");
-        router.push(`/${type}`);
-    }, [client, bookId, type, router]);
+        router.push(`/history`);
+    }, [client, bookId, router]);
 
   return (
-    <>
-    {(type === "history") &&
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-              <FavoriteButton favoriteFunction={favoriteStory} />
-              <PublishButton publishFunction={publishStory} />
-              <DeleteButton deleteFunction={deleteStory} />
-            </div>
+    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+      {favorited ?
+        <UnfavoriteButton unfavoriteFunction={unfavoriteStory} />
+        :
+        <FavoriteButton favoriteFunction={favoriteStory} />
       }
-      {(type === "favorited") &&
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-              <UnfavoriteButton unfavoriteFunction={unfavoriteStory} />
-              {authorId === session?.user.id &&
-                  <DeleteButton deleteFunction={deleteStory} />
-              }
-          </div>
+      {authorId === session?.user.id &&
+        <>
+          {published ?
+            <UnpublishButton unpublishFunction={unpublishStory} />
+            :
+            <PublishButton publishFunction={publishStory} />
+          }
+          <DeleteButton deleteFunction={deleteStory} />
+        </>
       }
-      {(type === "community") &&
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-              <FavoriteButton favoriteFunction={favoriteStory} />
-              {authorId === session?.user.id &&
-              <>
-                  <UnpublishButton unpublishFunction={unpublishStory} />
-                  <DeleteButton deleteFunction={deleteStory} />
-              </>
-              }
-          </div>
-          
-      }
-    </>
+    </div>
   );
 }

@@ -31,7 +31,7 @@ const page = async ({ searchParams } : { searchParams: Promise<{ query?: string,
                 ) : (
                     <ul className="grid grid-cols-4 gap-4 w-[80%]">
                         {stories.map(s => (
-                            <StoryCard key={s.id} s={s} type='favorited' />
+                            <StoryCard key={s.id} story={s} />
                         ))}
                     </ul>
                 )}

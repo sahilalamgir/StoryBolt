@@ -5,12 +5,8 @@ import { getStory } from "@/lib/getStory";
 
 export const revalidate = 60;
 
-export default async function StoryPage({ params, searchParams }: {
-  params: Promise<{ id: string }>,
-  searchParams: Promise<{ type?: string }>
-}) {
+export default async function StoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { type } = await searchParams;
 
   // 1) Grab Clerk’s session (with cookies) on the server
   const { userId, getToken } = await auth();
@@ -20,7 +16,7 @@ export default async function StoryPage({ params, searchParams }: {
   return (
     <div className="flex flex-col items-center min-h-screen pt-32 pb-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <Storybook story={story} />
-      <StoryActions bookId={id} type={type} authorId={story.authorId} />
+      <StoryActions bookId={id} authorId={story.authorId} />
     </div>
   )
 }
