@@ -28,30 +28,20 @@ export default function StoryActions({ bookId, authorId }: Props) {
 
   useEffect(() => {
     if (!client || !bookId) return;
-    const fetchStory = async () => {
-      const { data: bookData, error: bookError } = await client
-        .from('books')
-        .select('favorited, published')
-        .eq('id', bookId)
+    (async () => {
+      const { data, error } = await client
+        .from("books")
+        .select(`published, favorites(id)`)
+        .eq("id", bookId)
+        .eq("favorites.user_id", session?.user.id)
         .single();
-      if (bookError || !bookData) {
-        console.error("Fetch error:", bookError);
+      if (error) {
+        console.error("Fetch error:", error);
         return;
       }
-      const { data: favoriteData, error: favoriteError } = await client
-        .from('favorites')
-        .select('*')
-        .eq('book_id', bookId)
-        .eq('user_id', session?.user.id)
-        .maybeSingle();
-      if (favoriteError) {
-        console.error("Fetch error:", favoriteError);
-        return;
-      }
-      setFavorited(!!favoriteData);
-      setPublished(bookData.published);
-    };
-    fetchStory();
+      setPublished(data.published);
+      setFavorited(data.favorites.length > 0);
+    })();
   }, [client, bookId, session?.user.id]);
 
   // 1) Favorite handler
