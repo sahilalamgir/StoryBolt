@@ -18,13 +18,6 @@ const config = {
       },
     ],
   },
-  // Add exportPathMap to handle static generation of error pages
-  exportPathMap: async function (defaultPathMap: Record<string, { page: string; query?: Record<string, string> }>) {
-    return {
-      ...defaultPathMap,
-      '/404': { page: '/404' },
-    };
-  },
   // Disable static optimization for error-related pages
   experimental: {
     // This ensures proper handling of dynamic routes
