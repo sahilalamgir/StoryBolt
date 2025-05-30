@@ -5,6 +5,7 @@ import { StoryProvider } from "@/contexts/StoryContext";
 import { ClerkProvider } from '@clerk/nextjs';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Suspense } from "react";
 import SignUpLauncher from "@/components/SignUpLauncher";
 import { Analytics } from "@vercel/analytics/next"
 
@@ -36,7 +37,9 @@ export default function RootLayout({
         >
           <StoryProvider>
             <Navbar />
-            <SignUpLauncher />
+            <Suspense fallback={<div>Loading...</div>}>
+              <SignUpLauncher />
+            </Suspense>
             {children}
             <Footer />
             <Analytics />
