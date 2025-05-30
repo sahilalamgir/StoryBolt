@@ -16,6 +16,7 @@ Return only valid JSON. The JSON object must have exactly three keys:
 Do NOT output any code fences (\`\`\`), Markdown, comments, ellipses, or extra text.  
 Do NOT use single quotes (only standard JSON double quotes).  
 Do NOT include trailing commas.
+Do NOT generate any NSFW content.
 
 Example of the exact shape (for a page count of 3):
 
