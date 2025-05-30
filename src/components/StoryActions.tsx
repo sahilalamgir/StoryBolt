@@ -8,6 +8,7 @@ import FavoriteButton from "./FavoriteButton";
 import PublishButton from "./PublishButton";
 import UnfavoriteButton from "./UnfavoriteButton";
 import UnpublishButton from "./UnpublishButton";
+import DeleteButton from "./DeleteButton";
 
 interface Props {
   bookId:   string;
@@ -35,6 +36,7 @@ export default function StoryActions({ bookId, type, authorId }: Props) {
     if (error) {
       console.error("Favorite error:", error);
       alert("Could not favorite story.");
+      return;
     } else {
       alert("Story favorited!");
     }
@@ -53,6 +55,7 @@ export default function StoryActions({ bookId, type, authorId }: Props) {
     if (error) {
         console.error("Publish error:", error);
         alert("Could not publish story.");
+        return;
     } else {
         alert("Story published!");
     }
@@ -68,6 +71,7 @@ export default function StoryActions({ bookId, type, authorId }: Props) {
         if (error) {
             console.error("Unfavorite error:", error);
             alert("Could not unfavorite story.");
+            return;
         } else {
             alert("Story unfavorited!");
         }
@@ -85,12 +89,47 @@ export default function StoryActions({ bookId, type, authorId }: Props) {
     })
     .eq('id', bookId);
     if (error) {
-    console.error("Unpublish error:", error);
-    alert("Could not unpublish story.");
+      console.error("Unpublish error:", error);
+      alert("Could not unpublish story.");
+      return;
     } else {
-    alert("Story unpublished!");
+      alert("Story unpublished!");
     }
     router.push(`/${type}`);
+    }, [client, bookId, type, router]);
+
+    // 5) Delete handler
+    const deleteStory = useCallback(async () => {
+        if (!client) return;
+        const { error: bookError } = await client
+          .from('books')
+          .delete()
+          .eq('id', bookId);
+        if (bookError) {
+          console.error("Delete error:", bookError);
+          alert("Could not delete story.");
+          return;
+        }
+        const { error: favoriteError } = await client
+          .from('favorites')
+          .delete()
+          .eq('book_id', bookId);
+        if (favoriteError) {
+          console.error("Delete error:", favoriteError);
+          alert("Could not delete story.");
+          return;
+        }
+        const { error: pageError } = await client
+          .from('pages')
+          .delete()
+          .eq('book_id', bookId);
+        if (pageError) {
+          console.error("Delete error:", pageError);
+          alert("Could not delete story.");
+          return;
+        }
+        alert("Story deleted!");
+        router.push(`/${type}`);
     }, [client, bookId, type, router]);
 
   return (
@@ -99,18 +138,25 @@ export default function StoryActions({ bookId, type, authorId }: Props) {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
               <FavoriteButton favoriteFunction={favoriteStory} />
               <PublishButton publishFunction={publishStory} />
+              <DeleteButton deleteFunction={deleteStory} />
             </div>
       }
       {(type === "favorited") &&
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
               <UnfavoriteButton unfavoriteFunction={unfavoriteStory} />
+              {authorId === session?.user.id &&
+                  <DeleteButton deleteFunction={deleteStory} />
+              }
           </div>
       }
       {(type === "community") &&
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
               <FavoriteButton favoriteFunction={favoriteStory} />
               {authorId === session?.user.id &&
+              <>
                   <UnpublishButton unpublishFunction={unpublishStory} />
+                  <DeleteButton deleteFunction={deleteStory} />
+              </>
               }
           </div>
           
