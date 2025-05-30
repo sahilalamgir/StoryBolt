@@ -110,24 +110,6 @@ export default function StoryActions({ bookId, type, authorId }: Props) {
           alert("Could not delete story.");
           return;
         }
-        const { error: favoriteError } = await client
-          .from('favorites')
-          .delete()
-          .eq('book_id', bookId);
-        if (favoriteError) {
-          console.error("Delete error:", favoriteError);
-          alert("Could not delete story.");
-          return;
-        }
-        const { error: pageError } = await client
-          .from('pages')
-          .delete()
-          .eq('book_id', bookId);
-        if (pageError) {
-          console.error("Delete error:", pageError);
-          alert("Could not delete story.");
-          return;
-        }
         alert("Story deleted!");
         router.push(`/${type}`);
     }, [client, bookId, type, router]);
