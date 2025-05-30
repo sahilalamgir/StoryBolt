@@ -1,6 +1,11 @@
+'use client';
+
+import { Suspense } from 'react';
 import Link from 'next/link';
 
-export default function NotFound() {
+// Separate component for any potential hooks usage
+function NotFoundContent() {
+  // Any hooks would go here
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 px-4">
       <div className="text-center max-w-md">
@@ -19,5 +24,13 @@ export default function NotFound() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function NotFound() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <NotFoundContent />
+    </Suspense>
   );
 } 

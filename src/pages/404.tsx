@@ -1,6 +1,8 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 
-export default function Custom404() {
+// Separate component for any hooks or search params usage
+function NotFoundContent() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 px-4">
       <div className="text-center max-w-md">
@@ -19,5 +21,14 @@ export default function Custom404() {
         </Link>
       </div>
     </div>
+  );
+}
+
+// Wrap in Suspense to handle any client side transitions
+export default function Custom404() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <NotFoundContent />
+    </Suspense>
   );
 } 
