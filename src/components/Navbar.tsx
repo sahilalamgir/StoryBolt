@@ -4,11 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Menu } from 'lucide-react';
 
 const Navbar = () => {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,7 +30,8 @@ const Navbar = () => {
                 <span className="bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">Bolt</span>
               </Link>
             </div>
-            <div className="flex gap-6 items-center">
+            {/* Desktop links */}
+            <div className="hidden md:flex gap-6 items-center">
               {isLoaded && (
                 isSignedIn ? (
                   <>
@@ -67,8 +70,61 @@ const Navbar = () => {
                 )
               )}
             </div>
+            {/* Hamburger for mobile */}
+            <div className="md:hidden flex items-center">
+              <button
+                aria-label="Open menu"
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-2 rounded-md hover:bg-gray-100 transition"
+              >
+                <Menu size={28} color='#6366f1' />
+              </button>
+            </div>
           </div>
         </div>
+        {/* Mobile dropdown menu */}
+        {menuOpen && (
+          <div className="md:hidden fixed inset-0 z-50 bg-black/40" onClick={() => setMenuOpen(false)}>
+            <div
+              className="absolute right-4 top-4 w-64 bg-white rounded-xl shadow-lg p-6 flex flex-col gap-4 animate-fade-in"
+              onClick={e => e.stopPropagation()}
+            >
+              {isLoaded && (
+                isSignedIn ? (
+                  <>
+                    <Link href="/" className="text-gray-700 hover:text-purple-600 transition" onClick={() => setMenuOpen(false)}>Home</Link>
+                    <Link href="/history" className="text-gray-700 hover:text-purple-600 transition" onClick={() => setMenuOpen(false)}>History</Link>
+                    <Link href="/favorited" className="text-gray-700 hover:text-purple-600 transition" onClick={() => setMenuOpen(false)}>Favorited</Link>
+                    <Link href="/community" className="text-gray-700 hover:text-purple-600 transition" onClick={() => setMenuOpen(false)}>Community</Link>
+                    <button 
+                      onClick={() => { router.push('/generate'); setMenuOpen(false); }}
+                      className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium py-2 px-4 rounded-full hover:shadow-lg transition"
+                    >
+                      Create Story
+                    </button>
+                    <div className="mt-2"><UserButton /></div>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/#features" className="text-gray-700 hover:text-purple-600 transition" onClick={() => setMenuOpen(false)}>Features</Link>
+                    <Link href="/#how-it-works" className="text-gray-700 hover:text-purple-600 transition" onClick={() => setMenuOpen(false)}>How It Works</Link>
+                    <Link href="/#testimonials" className="text-gray-700 hover:text-purple-600 transition" onClick={() => setMenuOpen(false)}>Testimonials</Link>
+                    <SignInButton mode="modal">
+                      <button className="text-gray-700 hover:text-purple-600 font-medium w-full text-left mt-2">
+                        Sign In
+                      </button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <button className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium w-full py-2 px-4 rounded-full hover:shadow-lg transition mt-2">
+                        Sign Up
+                      </button>
+                    </SignUpButton>
+                  </>
+                )
+              )}
+            </div>
+          </div>
+        )}
       </nav>
   )
 }

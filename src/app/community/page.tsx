@@ -1,7 +1,7 @@
 import StorySearch from '@/components/StorySearch';
 import { auth } from '@clerk/nextjs/server';
 import { getStories } from '@/lib/getStories';
-import StoryCard from '@/components/StoryCard';
+import StoryBox from '@/components/StoryBox';
 
 export const revalidate = 60;
 
@@ -27,15 +27,7 @@ const page = async ({ searchParams } : { searchParams: Promise<{ query?: string,
                     <span className="bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">Stories</span>
                 </h1>
                 <StorySearch query={query} genre={genre} type='community' />
-                {stories.length === 0 ? (
-                    <p className="text-2xl text-center">No stories found</p>
-                ) : (
-                    <ul className="grid grid-cols-4 gap-4 w-[80%]">
-                        {stories.map(s => (
-                            <StoryCard key={s.id} story={s} />
-                        ))}
-                    </ul>
-                )}
+                <StoryBox stories={stories} />
             </div>
         </div>
     )

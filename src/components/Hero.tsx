@@ -37,7 +37,8 @@ const Hero = () => {
                 Start Your Story
               </button>
             </div>
-            <div className="md:w-1/2 relative h-80 md:h-[450px]">
+            {/* Images for desktop/tablet */}
+            <div className="md:w-1/2 relative h-80 md:h-[450px] hidden md:block">
               <div className="absolute -right-4 top-0 w-72 h-72 rounded-xl shadow-xl overflow-hidden transform rotate-3 bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-200">
                 <div className="p-4 h-full flex flex-col">
                   <div className="h-40 bg-gradient-to-r from-purple-300 to-indigo-300 rounded-lg mb-4">
@@ -59,6 +60,37 @@ const Hero = () => {
                     <div className="h-3 bg-pink-200 rounded"></div>
                     <div className="h-3 bg-pink-200 rounded w-4/5"></div>
                     <div className="h-3 bg-pink-200 rounded w-2/3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Overlapping images for mobile - side by side with slight overlap */}
+            <div className="w-full flex justify-center mt-8 md:hidden">
+              <div className="relative flex flex-row items-end justify-center w-88 h-36">
+                {/* Pink card (left, slightly overlapping) */}
+                <div className="w-1/2 rounded-xl shadow-xl overflow-hidden transform -rotate-6 bg-gradient-to-br from-pink-100 to-purple-100 border border-pink-200 z-10 relative mr-[-24px]">
+                  <div className="p-3 h-full flex flex-col">
+                    <div className="h-20 bg-gradient-to-r from-pink-300 to-purple-300 rounded-lg mb-3">
+                      <Image src="https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-800x525.jpg" alt="Hero Image 2" className="w-full h-full object-cover rounded-md" width={160} height={160} />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-2 bg-pink-200 rounded w-3/4"></div>
+                      <div className="h-2 bg-pink-200 rounded"></div>
+                      <div className="h-2 bg-pink-200 rounded w-5/6"></div>
+                    </div>
+                  </div>
+                </div>
+                {/* Purple card (right, slightly underlapping) */}
+                <div className="w-1/2 rounded-xl shadow-xl overflow-hidden transform rotate-3 bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-200 relative z-0">
+                  <div className="p-3 h-full flex flex-col">
+                    <div className="h-20 bg-gradient-to-r from-purple-300 to-indigo-300 rounded-lg mb-3">
+                      <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/500px-Image_created_with_a_mobile_phone.png" alt="Hero Image 1" className="w-full h-full object-cover rounded-md" width={160} height={160} />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-2 bg-purple-200 rounded w-3/4"></div>
+                      <div className="h-2 bg-purple-200 rounded"></div>
+                      <div className="h-2 bg-purple-200 rounded w-5/6"></div>
+                    </div>
                   </div>
                 </div>
               </div>
