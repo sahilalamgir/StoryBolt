@@ -3,7 +3,8 @@ interface Story {
     paragraphs: string[];
     images: string[];
     genre: string;
-    // stars: number;
+    stars: number;
+    authorId: string;
 }
 
 export default Story;

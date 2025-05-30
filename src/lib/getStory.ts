@@ -9,11 +9,14 @@ type SignedInSessionResource = NonNullable<
 
 export type StoryParams = {
     bookId: string;
+    userId: string;
     getToken: () => Promise<string | null>;
 };
 
 export const getStory = unstable_cache(
-    async ({ bookId, getToken }: StoryParams) => {
+    async ({ bookId, userId, getToken }: StoryParams) => {
+        void userId;
+        
         // 2) Spin up your Clerk-aware Supabase client
         const supabase = createClerkSupabaseClient({
             // mimic the “session” shape expected by createClerkSupabaseClient
@@ -23,7 +26,7 @@ export const getStory = unstable_cache(
         // 3) Fetch the book row; RLS will only let you see it if published=true or user_id=session.userId
         const { data: book, error: bookErr } = await supabase
             .from("books")
-            .select("title, genre, cover_image, user_id")
+            .select("title, genre, cover_image, user_id, favorites!book_id (count)")
             .eq("id", bookId)
             .maybeSingle();
 
@@ -49,10 +52,12 @@ export const getStory = unstable_cache(
             genre: book.genre,
             images: [book.cover_image, ...pages.map(p => p.image_path)],
             paragraphs: pages.map(p => p.text_content),
+            stars: book.favorites?.[0]?.count ?? 0,
+            authorId: book.user_id,
         };
         
         return story;
     },
-    ['story'],
+    ['getStory'],
     { revalidate: 60 }
 );

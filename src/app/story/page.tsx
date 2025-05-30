@@ -58,7 +58,6 @@ export default function StoryPage() {
           genre:       story.genre,
           page_count:  story.paragraphs.length,
           cover_image: story.images[0],
-          // favorited:   false,
           published:   false,
         })
         .select('id')
@@ -88,8 +87,8 @@ export default function StoryPage() {
   return (
     <div className="flex flex-col items-center min-h-screen pt-32 pb-20
                     bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      <Storybook story={story} stars="0" />
-      <StoryActions type="history" bookId={bookId ?? ""} authorId={user!.id} />
+      <Storybook story={story} />
+      <StoryActions type="history" bookId={bookId ?? ""} authorId={story.authorId} />
     </div>
   );
 }

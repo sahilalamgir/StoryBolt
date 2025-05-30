@@ -93,6 +93,6 @@ export const getStories = unstable_cache(
         
         return stories.map((s, i) => ({...s, fullName: fullNames[i]}));
     },
-    ['stories'],
+    ['getStories'],
     { revalidate: 60 }
 );

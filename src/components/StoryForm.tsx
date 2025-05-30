@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStory } from "@/contexts/StoryContext";
+import { useUser } from "@clerk/nextjs";
 
 const GENRES = ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Comedy", "Action", "Adventure", "Horror", "Drama", "Fairy Tale"] as const;
 const ART_STYLES = ["Realistic", "Cartoon", "Cyberpunk", "Anime", "Folk", "Watercolor", "Pixel", "Sketch", "Oil", "Paper Cutout"] as const;
@@ -16,6 +17,7 @@ export default function StoryForm() {
   const [pageCount, setPageCount] = useState(10);
   const [inputValue, setInputValue] = useState(String(10));
   const [loading, setLoading] = useState(false);
+  const { user } = useUser();
 
   const clamp = (n: number) => Math.min(20, Math.max(5, n));
 
@@ -49,6 +51,7 @@ export default function StoryForm() {
         throw new Error(`Failed to generate images: HTTP ${imageData.status}: ${await imageData.text()}`);
       }
       const { images } = await imageData.json();
+      console.log(images);
 
       // const images = await Promise.all(
       //   imageData.imageUrls.map(async (imageUrl: string) => {
@@ -56,14 +59,14 @@ export default function StoryForm() {
       //     return URL.createObjectURL(response.data);
       //   })
       // );
-
-      console.log("hello", images);
     
       setStory({
         title, 
         paragraphs, 
         images, 
         genre, 
+        stars: 0,
+        authorId: user?.id ?? "",
       });
 
       router.push("/story");

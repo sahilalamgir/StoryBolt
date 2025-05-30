@@ -13,6 +13,8 @@ export const defaultStory: Story = {
     paragraphs: [],
     images: [],
     genre: "",
+    stars: 0,
+    authorName: "",
 };
 
 const StoryContext = createContext<StoryContextProps>({

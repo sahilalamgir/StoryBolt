@@ -18,7 +18,7 @@ interface StoryCardType {
 
 const StoryCard = ({ s, type }: { s: StoryCardType, type: string }) => {
   return (
-    <Link href={`/story/${s.id}?type=${type}&author=${s.fullName}&stars=${s.stars}`}>
+    <Link href={`/story/${s.id}?type=${type}`}>
         <Card className="p-0">
             <CardContent className="p-0 flex flex-col">
                 <Image className="rounded-t-lg w-full" src={s.cover_image} alt={`Story ${s.id}`} width={512} height={512} />
