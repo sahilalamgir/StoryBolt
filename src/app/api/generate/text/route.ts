@@ -7,6 +7,13 @@ export async function POST(req: Request) {
         const aiPrompt = `Genre: ${genre}
 User prompt: ${prompt}
 
+IMPORTANT CONTENT GUIDELINES:
+- Create family-friendly content suitable for all ages
+- Avoid any violence, graphic descriptions, or mature themes
+- Keep language positive and appropriate for children
+- Focus on adventure, friendship, problem-solving, and positive outcomes
+- No scary, threatening, or harmful content
+
 Return only valid JSON. The JSON object must have exactly three keys:
 
 1. "title": a single string that describes the story.  
@@ -17,18 +24,25 @@ Do NOT output any code fences (\`\`\`), Markdown, comments, ellipses, or extra t
 Do NOT use single quotes (only standard JSON double quotes).  
 Do NOT include trailing commas.
 Do NOT generate any NSFW content.
+Keep all content appropriate for children and text-to-speech services.
 
 Example of the exact shape (for a page count of 3):
 
 \`\`\`json
 {"title":"A Hero is Born","paragraphs":["First paragraph text here. Second sentence. Third sentence.","Second paragraph text here. Second sentence. Third sentence.","Third paragraph text here. Second sentence. Third sentence."],"imagePrompts":["A boy standing alone under a stormy sky.","A tall castle perched atop a snowy mountain.","A fierce dragon breathing flame over a village at dawn."]}`
         const resp = await fetch(`https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`);
+        
         if (!resp.ok) {
           throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
         }
-        console.log("resp", resp);
+
         const data = await resp.json();
-        console.log("data", data);
+
+        // Validate response structure
+        if (!data.title || !data.paragraphs || !data.imagePrompts) {
+          throw new Error("Invalid response structure from AI service");
+      }
+
         return NextResponse.json(data);
       } catch (err: unknown) {
         console.error(err);

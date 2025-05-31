@@ -53,7 +53,7 @@ const Hero = () => {
               <div className="absolute left-4 bottom-0 w-72 h-72 rounded-xl shadow-xl overflow-hidden transform -rotate-6 bg-gradient-to-br from-pink-100 to-purple-100 border border-pink-200">
                 <div className="p-4 h-full flex flex-col">
                   <div className="h-40 bg-gradient-to-r from-pink-300 to-purple-300 rounded-lg mb-4">
-                    <Image src="/fairy.png" alt="Hero Image 2" className="w-full h-full object-cover rounded-md" width={512} height={512} />
+                    <Image src="/fairy.png" alt="Hero Image 2" className="w-full h-full object-cover object-top rounded-md" width={512} height={512} />
                   </div>
                   <div className="space-y-2">
                     <div className="h-3 bg-pink-200 rounded"></div>
@@ -70,7 +70,7 @@ const Hero = () => {
                 <div className="w-1/2 rounded-xl shadow-xl overflow-hidden transform -rotate-6 bg-gradient-to-br from-pink-100 to-purple-100 border border-pink-200 z-10 relative mr-[-24px]">
                   <div className="p-3 h-full flex flex-col">
                     <div className="h-20 bg-gradient-to-r from-pink-300 to-purple-300 rounded-lg mb-3">
-                      <Image src="/fairy.png" alt="Hero Image 2" className="w-full h-full object-cover rounded-md" width={160} height={160} />
+                      <Image src="/fairy.png" alt="Hero Image 2" className="w-full h-full object-cover object-top rounded-md" width={160} height={160} />
                     </div>
                     <div className="space-y-1">
                       <div className="h-2 bg-pink-200 rounded w-3/4"></div>

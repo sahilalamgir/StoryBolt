@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import createClerkSupabaseClient from '@/lib/supabase';
+import { useSession } from '@clerk/nextjs';
+
+type SignedInSessionResource = NonNullable<
+  ReturnType<typeof useSession>['session']
+>;
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +24,7 @@ export async function POST(request: NextRequest) {
     // Create Supabase client with proper session token
     const supabase = createClerkSupabaseClient({
       getToken,
-    } as Parameters<typeof createClerkSupabaseClient>[0]);
+    } as SignedInSessionResource | null | undefined);
 
     // Check if book already exists
     const { data: existing, error: selErr } = await supabase
