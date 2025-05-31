@@ -47,7 +47,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
         removeToast(id);
       }, duration);
     },
-    [removeToast]
+    [removeToast],
   );
 
   return (

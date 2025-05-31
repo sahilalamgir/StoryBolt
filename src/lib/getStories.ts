@@ -88,12 +88,12 @@ export const getStories = unstable_cache(
       console.error(err);
     }
 
-    const userIds = [...new Set(stories.map(s => s.user_id))]; // Remove duplicates
+    const userIds = [...new Set(stories.map((s) => s.user_id))]; // Remove duplicates
     const authorNames = await getAuthorNames(userIds);
 
-    return stories.map((s) => ({ 
-      ...s, 
-      fullName: authorNames[s.user_id] || null 
+    return stories.map((s) => ({
+      ...s,
+      fullName: authorNames[s.user_id] || null,
     }));
   },
   ["getStories"],
