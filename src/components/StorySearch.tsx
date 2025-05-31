@@ -1,6 +1,6 @@
 import React from "react";
 import Form from "next/form";
-import StorySearchReset from "./StorySearchReset";
+import StorySearchReset from "@/components/buttons/StorySearchReset";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

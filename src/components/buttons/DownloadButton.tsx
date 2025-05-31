@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Download } from "lucide-react";
 import jsPDF from "jspdf";
 import type Story from "@/types/story";
-import { useToast } from "./ui/toast";
+import { useToast } from "@/components/ui/toast";
 
 const DownloadButton = ({ story }: { story: Story }) => {
   const [isGenerating, setIsGenerating] = useState(false);

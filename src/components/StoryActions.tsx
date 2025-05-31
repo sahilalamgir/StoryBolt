@@ -4,12 +4,12 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@clerk/nextjs";
 import createClerkSupabaseClient from "@/lib/supabase";
 import React, { useMemo, useCallback, useState, useEffect } from "react";
-import FavoriteButton from "./FavoriteButton";
-import PublishButton from "./PublishButton";
-import UnfavoriteButton from "./UnfavoriteButton";
-import UnpublishButton from "./UnpublishButton";
-import DeleteButton from "./DeleteButton";
-import { useToast } from "./ui/toast";
+import FavoriteButton from "@/components/buttons/FavoriteButton";
+import PublishButton from "@/components/buttons/PublishButton";
+import UnfavoriteButton from "@/components/buttons/UnfavoriteButton";
+import UnpublishButton from "@/components/buttons/UnpublishButton";
+import DeleteButton from "@/components/buttons/DeleteButton";
+import { useToast } from "@/components/ui/toast";
 
 interface Props {
   bookId: string;

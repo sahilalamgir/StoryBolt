@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/carousel";
 import Story from "@/types/story";
 import Image from "next/image";
-import DownloadButton from "@/components/DownloadButton";
-import AudioButton from "./AudioButton";
+import DownloadButton from "@/components/buttons/DownloadButton";
+import AudioButton from "@/components/buttons/AudioButton";
 import { Star } from "lucide-react";
 
 const Storybook = ({ story }: { story: Story }) => {

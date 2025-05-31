@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStory } from "@/contexts/StoryContext";
 import { useUser } from "@clerk/nextjs";
-import { useToast } from "./ui/toast";
+import { useToast } from "@/components/ui/toast";
 
 const GENRES = [
   "Fantasy",
@@ -61,7 +61,7 @@ export default function StoryForm() {
         throw new Error(
           `Failed to generate text: HTTP ${
             textData.status
-          }: ${await textData.text()}`,
+          }: ${await textData.text()}`
         );
       }
       const { title, paragraphs, imagePrompts } = await textData.json();
@@ -80,7 +80,7 @@ export default function StoryForm() {
         throw new Error(
           `Failed to generate images: HTTP ${
             imageData.status
-          }: ${await imageData.text()}`,
+          }: ${await imageData.text()}`
         );
       }
       const { images } = await imageData.json();
@@ -98,7 +98,7 @@ export default function StoryForm() {
         throw new Error(
           `Failed to save story: HTTP ${
             storyData.status
-          }: ${await storyData.text()}`,
+          }: ${await storyData.text()}`
         );
       }
 

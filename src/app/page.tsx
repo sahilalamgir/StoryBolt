@@ -1,8 +1,8 @@
-import Hero from "@/components/Hero";
-import Features from "@/components/Features";
-import HowItWorks from "@/components/HowItWorks";
-import Showcase from "@/components/Showcase";
-import Testimonials from "@/components/Testimonials";
+import Hero from "@/components/home/Hero";
+import Features from "@/components/home/Features";
+import HowItWorks from "@/components/home/HowItWorks";
+import Showcase from "@/components/home/Showcase";
+import Testimonials from "@/components/home/Testimonials";
 import SignInSection from "@/components/SignInSection";
 
 // Enable Static Site Generation

@@ -1,5 +1,5 @@
 import React from "react";
-import StoryCard from "./StoryCard";
+import StoryCard from "@/components/StoryCard";
 
 interface StoryBoxType {
   fullName: string | null;
