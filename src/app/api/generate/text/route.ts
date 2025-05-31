@@ -18,6 +18,7 @@ Do NOT output any code fences (\`\`\`), Markdown, comments, ellipses, or extra t
 Do NOT use single quotes (only standard JSON double quotes).  
 Do NOT include trailing commas.
 Do NOT generate any NSFW content.
+When using apostrophes in the title and paragraphs, ONLY use straight apostrophes (').
 
 Example of the exact shape (for a page count of 3):
 

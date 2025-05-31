@@ -3,7 +3,7 @@ import Features from "@/components/home/Features";
 import HowItWorks from "@/components/home/HowItWorks";
 import Showcase from "@/components/home/Showcase";
 import Testimonials from "@/components/home/Testimonials";
-import SignInSection from "@/components/SignInSection";
+import SignInSection from "@/components/home/SignInSection";
 
 // Enable Static Site Generation
 export const dynamic = "force-static";
