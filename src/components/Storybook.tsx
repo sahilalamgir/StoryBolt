@@ -12,15 +12,14 @@ import Image from "next/image";
 import DownloadButton from "@/components/DownloadButton";
 import AudioButton from "./AudioButton";
 import { Star } from "lucide-react";
-import getAuthorName from "@/lib/getAuthorName";
 
 const Storybook = ({ story }: { story: Story }) => {
-  const authorName = getAuthorName(story.authorId);
   return (
     <>
       <div className="flex flex-col gap-y-2 items-center justify-between">
         <h1 className="text-3xl md:text-4xl font-bold leading-tight bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent">
-          {story.title} <span className="text-gray-500">by {authorName}</span>
+          {story.title}{" "}
+          <span className="text-gray-500 italic">by {story.authorName}</span>
         </h1>
         <div className="flex flex-row gap-x-5 items-center justify-between">
           <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-sm mt-1 px-4 py-2 rounded-full shadow-sm">

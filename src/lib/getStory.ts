@@ -2,6 +2,7 @@ import { useSession } from "@clerk/nextjs";
 import createClerkSupabaseClient from "./supabase";
 import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
+import { getAuthorName } from "./getAuthorNames";
 
 type SignedInSessionResource = NonNullable<
   ReturnType<typeof useSession>["session"]
@@ -46,6 +47,8 @@ export const getStory = unstable_cache(
       notFound();
     }
 
+    const authorName = await getAuthorName(book.user_id);
+
     // 5) Build the story shape
     const story = {
       title: book.title,
@@ -54,6 +57,7 @@ export const getStory = unstable_cache(
       paragraphs: pages.map((p) => p.text_content),
       stars: book.favorites?.[0]?.count ?? 0,
       authorId: book.user_id,
+      authorName: authorName ?? "",
     };
 
     return story;

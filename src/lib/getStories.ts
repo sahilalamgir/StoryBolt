@@ -1,7 +1,7 @@
 import { useSession } from "@clerk/nextjs";
 import createClerkSupabaseClient from "./supabase";
 import { unstable_cache } from "next/cache";
-import { clerkClient } from "@clerk/nextjs/server";
+import { getAuthorNames } from "./getAuthorNames";
 
 type SignedInSessionResource = NonNullable<
   ReturnType<typeof useSession>["session"]
@@ -28,7 +28,6 @@ export const getStories = unstable_cache(
   async ({ type, query, genre, userId, getToken }: StoryParams) => {
     // 2) Spin up your Clerk-aware Supabase client
     const supabase = createClerkSupabaseClient({
-      // mimic the “session” shape expected by createClerkSupabaseClient
       getToken,
     } as SignedInSessionResource | null | undefined);
 
@@ -89,15 +88,13 @@ export const getStories = unstable_cache(
       console.error(err);
     }
 
-    const clerk = await clerkClient();
-    const fullNames = await Promise.all(
-      stories.map(async (s) => {
-        const user = await clerk.users.getUser(s.user_id);
-        return user.fullName;
-      }),
-    );
+    const userIds = [...new Set(stories.map(s => s.user_id))]; // Remove duplicates
+    const authorNames = await getAuthorNames(userIds);
 
-    return stories.map((s, i) => ({ ...s, fullName: fullNames[i] }));
+    return stories.map((s) => ({ 
+      ...s, 
+      fullName: authorNames[s.user_id] || null 
+    }));
   },
   ["getStories"],
   { revalidate: 60 },

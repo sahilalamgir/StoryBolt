@@ -6,12 +6,7 @@ import jsPDF from "jspdf";
 import type Story from "@/types/story";
 import { useToast } from "./ui/toast";
 
-interface DownloadButtonProps {
-  story: Story;
-  authorName: string;
-}
-
-const DownloadButton = ({ story, authorName }: DownloadButtonProps) => {
+const DownloadButton = ({ story }: { story: Story }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const { addToast } = useToast();
 
@@ -50,7 +45,7 @@ const DownloadButton = ({ story, authorName }: DownloadButtonProps) => {
       // Add author information
       doc.setFontSize(16);
       doc.setFont("helvetica", "italic");
-      doc.text(`by ${authorName}`, 105, 80, { align: "center" });
+      doc.text(`by ${story.authorName}`, 105, 80, { align: "center" });
 
       // Add genre
       doc.setFontSize(14);

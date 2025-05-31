@@ -15,6 +15,7 @@ export const defaultStory: Story = {
   genre: "",
   stars: 0,
   authorId: "",
+  authorName: "",
 };
 
 const StoryContext = createContext<StoryContextProps>({

@@ -57,7 +57,9 @@ export default function StoryForm() {
       });
       if (!textData.ok) {
         throw new Error(
-          `Failed to generate text: HTTP ${textData.status}: ${await textData.text()}`,
+          `Failed to generate text: HTTP ${
+            textData.status
+          }: ${await textData.text()}`
         );
       }
       const { title, paragraphs, imagePrompts } = await textData.json();
@@ -77,7 +79,9 @@ export default function StoryForm() {
       });
       if (!imageData.ok) {
         throw new Error(
-          `Failed to generate images: HTTP ${imageData.status}: ${await imageData.text()}`,
+          `Failed to generate images: HTTP ${
+            imageData.status
+          }: ${await imageData.text()}`
         );
       }
       const { images } = await imageData.json();
@@ -94,7 +98,9 @@ export default function StoryForm() {
 
       if (!storyData.ok) {
         throw new Error(
-          `Failed to save story: HTTP ${storyData.status}: ${await storyData.text()}`,
+          `Failed to save story: HTTP ${
+            storyData.status
+          }: ${await storyData.text()}`
         );
       }
 
@@ -108,6 +114,7 @@ export default function StoryForm() {
         genre,
         stars: 0,
         authorId: user?.id ?? "",
+        authorName: user?.fullName ?? "",
       });
 
       // Redirect to the individual story page
