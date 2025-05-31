@@ -5,15 +5,38 @@ import { useRouter } from "next/navigation";
 import { useStory } from "@/contexts/StoryContext";
 import { useUser } from "@clerk/nextjs";
 
-const GENRES = ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Comedy", "Action", "Adventure", "Horror", "Drama", "Fairy Tale"] as const;
-const ART_STYLES = ["Realistic", "Cartoon", "Cyberpunk", "Anime", "Folk", "Watercolor", "Pixel", "Sketch", "Oil", "Paper Cutout"] as const;
+const GENRES = [
+  "Fantasy",
+  "Sci-Fi",
+  "Mystery",
+  "Romance",
+  "Comedy",
+  "Action",
+  "Adventure",
+  "Horror",
+  "Drama",
+  "Fairy Tale",
+] as const;
+const ART_STYLES = [
+  "Realistic",
+  "Cartoon",
+  "Cyberpunk",
+  "Anime",
+  "Folk",
+  "Watercolor",
+  "Pixel",
+  "Sketch",
+  "Oil",
+  "Paper Cutout",
+] as const;
 
 export default function StoryForm() {
   const router = useRouter();
   const { setStory } = useStory();
   const [prompt, setPrompt] = useState("");
-  const [genre, setGenre] = useState<typeof GENRES[number]>("Fantasy");
-  const [artStyle, setArtStyle] = useState<typeof ART_STYLES[number]>("Realistic");
+  const [genre, setGenre] = useState<(typeof GENRES)[number]>("Fantasy");
+  const [artStyle, setArtStyle] =
+    useState<(typeof ART_STYLES)[number]>("Realistic");
   const [pageCount, setPageCount] = useState(10);
   const [inputValue, setInputValue] = useState(String(10));
   const [loading, setLoading] = useState(false);
@@ -25,15 +48,17 @@ export default function StoryForm() {
     try {
       setLoading(true);
 
-      const textData = await fetch('/api/generate/text', {
-        method: 'POST',
+      const textData = await fetch("/api/generate/text", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ prompt, genre, pageCount }),
       });
       if (!textData.ok) {
-        throw new Error(`Failed to generate text: HTTP ${textData.status}: ${await textData.text()}`);
+        throw new Error(
+          `Failed to generate text: HTTP ${textData.status}: ${await textData.text()}`,
+        );
       }
       const { title, paragraphs, imagePrompts } = await textData.json();
       console.log(title);
@@ -41,39 +66,46 @@ export default function StoryForm() {
       console.log(imagePrompts);
 
       const imageData = await fetch("/api/generate/images", {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ artStyle, allImagePrompts: [title, ...imagePrompts] }),
+        body: JSON.stringify({
+          artStyle,
+          allImagePrompts: [title, ...imagePrompts],
+        }),
       });
       if (!imageData.ok) {
-        throw new Error(`Failed to generate images: HTTP ${imageData.status}: ${await imageData.text()}`);
+        throw new Error(
+          `Failed to generate images: HTTP ${imageData.status}: ${await imageData.text()}`,
+        );
       }
       const { images } = await imageData.json();
       console.log(images);
 
       // Save the story to database and get book ID
-      const storyData = await fetch('/api/stories', {
-        method: 'POST',
+      const storyData = await fetch("/api/stories", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ title, paragraphs, images, genre }),
       });
-      
+
       if (!storyData.ok) {
-        throw new Error(`Failed to save story: HTTP ${storyData.status}: ${await storyData.text()}`);
+        throw new Error(
+          `Failed to save story: HTTP ${storyData.status}: ${await storyData.text()}`,
+        );
       }
-      
+
       const { bookId } = await storyData.json();
-    
+
       // Set story in context for potential future use
       setStory({
-        title, 
-        paragraphs, 
-        images, 
-        genre, 
+        title,
+        paragraphs,
+        images,
+        genre,
         stars: 0,
         authorId: user?.id ?? "",
       });
@@ -85,7 +117,7 @@ export default function StoryForm() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-6 p-6">

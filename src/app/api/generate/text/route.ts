@@ -1,10 +1,10 @@
-import {  NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-    try {
-        const { prompt, genre, pageCount } = await req.json();
-        console.log(prompt, genre, pageCount);
-        const aiPrompt = `Genre: ${genre}
+  try {
+    const { prompt, genre, pageCount } = await req.json();
+    console.log(prompt, genre, pageCount);
+    const aiPrompt = `Genre: ${genre}
 User prompt: ${prompt}
 
 Return only valid JSON. The JSON object must have exactly three keys:
@@ -21,23 +21,30 @@ Do NOT generate any NSFW content.
 Example of the exact shape (for a page count of 3):
 
 \`\`\`json
-{"title":"A Hero is Born","paragraphs":["First paragraph text here. Second sentence. Third sentence.","Second paragraph text here. Second sentence. Third sentence.","Third paragraph text here. Second sentence. Third sentence."],"imagePrompts":["A boy standing alone under a stormy sky.","A tall castle perched atop a snowy mountain.","A fierce dragon breathing flame over a village at dawn."]}`
-        const resp = await fetch(`https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`);
-        
-        if (!resp.ok) {
-          throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
-        }
+{"title":"A Hero is Born","paragraphs":["First paragraph text here. Second sentence. Third sentence.","Second paragraph text here. Second sentence. Third sentence.","Third paragraph text here. Second sentence. Third sentence."],"imagePrompts":["A boy standing alone under a stormy sky.","A tall castle perched atop a snowy mountain.","A fierce dragon breathing flame over a village at dawn."]}`;
+    const resp = await fetch(
+      `https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`,
+    );
 
-        const data = await resp.json();
+    if (!resp.ok) {
+      throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+    }
 
-        // Validate response structure
-        if (!data.title || !data.paragraphs || !data.imagePrompts) {
-          throw new Error("Invalid response structure from AI service");
-      }
+    const data = await resp.json();
 
-        return NextResponse.json(data);
-      } catch (err: unknown) {
-        console.error(err);
-        return NextResponse.json({ error: err instanceof Error ? err.message : 'An unknown error occurred' }, { status: 500 });
-      }
+    // Validate response structure
+    if (!data.title || !data.paragraphs || !data.imagePrompts) {
+      throw new Error("Invalid response structure from AI service");
+    }
+
+    return NextResponse.json(data);
+  } catch (err: unknown) {
+    console.error(err);
+    return NextResponse.json(
+      {
+        error: err instanceof Error ? err.message : "An unknown error occurred",
+      },
+      { status: 500 },
+    );
+  }
 }

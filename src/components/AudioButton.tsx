@@ -26,7 +26,7 @@ export default function AudioButton({ text }: { text: string }) {
       }
 
       const encodedText = encodeURIComponent(
-        `Say the following exactly: ${text}`
+        `Say the following exactly: ${text}`,
       );
       const params = new URLSearchParams({
         model: "openai-audio",
@@ -41,14 +41,14 @@ export default function AudioButton({ text }: { text: string }) {
           // Handle Azure OpenAI policy violations
           addToast(
             "Audio cannot be played due to content policy restrictions.",
-            "warning"
+            "warning",
           );
           return;
         } else {
           throw new Error(
             `Failed to generate audio: HTTP ${
               resp.status
-            }: ${await resp.text()}`
+            }: ${await resp.text()}`,
           );
         }
       }

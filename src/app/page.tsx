@@ -16,6 +16,6 @@ const Home = () => {
       <SignInSection />
     </div>
   );
-}
+};
 
 export default Home;
