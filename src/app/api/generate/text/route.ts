@@ -7,13 +7,6 @@ export async function POST(req: Request) {
         const aiPrompt = `Genre: ${genre}
 User prompt: ${prompt}
 
-IMPORTANT CONTENT GUIDELINES:
-- Create family-friendly content suitable for all ages
-- Avoid any violence, graphic descriptions, or mature themes
-- Keep language positive and appropriate for children
-- Focus on adventure, friendship, problem-solving, and positive outcomes
-- No scary, threatening, or harmful content
-
 Return only valid JSON. The JSON object must have exactly three keys:
 
 1. "title": a single string that describes the story.  
@@ -24,7 +17,6 @@ Do NOT output any code fences (\`\`\`), Markdown, comments, ellipses, or extra t
 Do NOT use single quotes (only standard JSON double quotes).  
 Do NOT include trailing commas.
 Do NOT generate any NSFW content.
-Keep all content appropriate for children and text-to-speech services.
 
 Example of the exact shape (for a page count of 3):
 
