@@ -9,7 +9,6 @@ const Hero = () => {
     const router = useRouter();
     const { isSignedIn } = useAuth();
     const navigateToCreate = () => {
-        
         if (isSignedIn) {
           router.push('/generate');
         } else {
@@ -42,7 +41,7 @@ const Hero = () => {
               <div className="absolute -right-4 top-0 w-72 h-72 rounded-xl shadow-xl overflow-hidden transform rotate-3 bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-200">
                 <div className="p-4 h-full flex flex-col">
                   <div className="h-40 bg-gradient-to-r from-purple-300 to-indigo-300 rounded-lg mb-4">
-                  <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/500px-Image_created_with_a_mobile_phone.png" alt="Hero Image 1" className="w-full h-full object-cover rounded-md" width={512} height={512} />
+                  <Image src="/keanu.png" alt="Hero Image 1" className="w-full h-full object-cover object-top rounded-md" width={512} height={512} />
                   </div>
                   <div className="space-y-2">
                     <div className="h-3 bg-purple-200 rounded w-3/4"></div>
@@ -84,7 +83,7 @@ const Hero = () => {
                 <div className="w-1/2 rounded-xl shadow-xl overflow-hidden transform rotate-3 bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-200 relative z-0">
                   <div className="p-3 h-full flex flex-col">
                     <div className="h-20 bg-gradient-to-r from-purple-300 to-indigo-300 rounded-lg mb-3">
-                      <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/500px-Image_created_with_a_mobile_phone.png" alt="Hero Image 1" className="w-full h-full object-cover rounded-md" width={160} height={160} />
+                      <Image src="/keanu.png" alt="Hero Image 1" className="w-full h-full object-cover object-top rounded-md" width={160} height={160} />
                     </div>
                     <div className="space-y-1">
                       <div className="h-2 bg-purple-200 rounded w-3/4"></div>

@@ -53,13 +53,22 @@ export default function StoryForm() {
       const { images } = await imageData.json();
       console.log(images);
 
-      // const images = await Promise.all(
-      //   imageData.imageUrls.map(async (imageUrl: string) => {
-      //     const response = await axios.get(imageUrl, { responseType: "blob" })
-      //     return URL.createObjectURL(response.data);
-      //   })
-      // );
+      // Save the story to database and get book ID
+      const storyData = await fetch('/api/stories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, paragraphs, images, genre }),
+      });
+      
+      if (!storyData.ok) {
+        throw new Error(`Failed to save story: HTTP ${storyData.status}: ${await storyData.text()}`);
+      }
+      
+      const { bookId } = await storyData.json();
     
+      // Set story in context for potential future use
       setStory({
         title, 
         paragraphs, 
@@ -69,7 +78,8 @@ export default function StoryForm() {
         authorId: user?.id ?? "",
       });
 
-      router.push("/story");
+      // Redirect to the individual story page
+      router.push(`/story/${bookId}`);
     } catch (err) {
       console.error("Error generating story:", err);
     } finally {

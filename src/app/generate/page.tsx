@@ -1,5 +1,3 @@
-// app/generate/page.tsx
-
 import StoryForm from "@/components/StoryForm";
 
 export default function Page() {
