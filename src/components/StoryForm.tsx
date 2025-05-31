@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStory } from "@/contexts/StoryContext";
 import { useUser } from "@clerk/nextjs";
+import { useToast } from "./ui/toast";
 
 const GENRES = [
   "Fantasy",
@@ -41,6 +42,7 @@ export default function StoryForm() {
   const [inputValue, setInputValue] = useState(String(10));
   const [loading, setLoading] = useState(false);
   const { user } = useUser();
+  const { addToast } = useToast();
 
   const clamp = (n: number) => Math.min(20, Math.max(5, n));
 
@@ -63,9 +65,6 @@ export default function StoryForm() {
         );
       }
       const { title, paragraphs, imagePrompts } = await textData.json();
-      console.log(title);
-      console.log(paragraphs);
-      console.log(imagePrompts);
 
       const imageData = await fetch("/api/generate/images", {
         method: "POST",
@@ -85,7 +84,6 @@ export default function StoryForm() {
         );
       }
       const { images } = await imageData.json();
-      console.log(images);
 
       // Save the story to database and get book ID
       const storyData = await fetch("/api/stories", {
@@ -121,6 +119,7 @@ export default function StoryForm() {
       router.push(`/story/${bookId}`);
     } catch (err) {
       console.error("Error generating story:", err);
+      addToast("Error generating story. Please try again later.", "error");
     } finally {
       setLoading(false);
     }

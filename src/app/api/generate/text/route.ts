@@ -38,7 +38,7 @@ Example of the exact shape (for a page count of 3):
     }
 
     return NextResponse.json(data);
-  } catch (err: unknown) {
+  } catch (err) {
     console.error(err);
     return NextResponse.json(
       {

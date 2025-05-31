@@ -13,8 +13,8 @@ export async function getAuthorNames(userIds: string[]): Promise<Record<string, 
         try {
           const user = await clerk.users.getUser(userId);
           return { userId, fullName: user.fullName };
-        } catch (error) {
-          console.error(`Failed to fetch user ${userId}:`, error);
+        } catch (err) {
+          console.error(`Failed to fetch user ${userId}:`, err);
           return { userId, fullName: null };
         }
       })
@@ -25,8 +25,8 @@ export async function getAuthorNames(userIds: string[]): Promise<Record<string, 
       acc[userId] = fullName;
       return acc;
     }, {} as Record<string, string | null>);
-  } catch (error) {
-    console.error("Error fetching author names:", error);
+  } catch (err) {
+    console.error("Error fetching author names:", err);
     return {};
   }
 }

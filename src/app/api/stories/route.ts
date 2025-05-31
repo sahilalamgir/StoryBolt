@@ -86,8 +86,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ bookId: newBook.id });
-  } catch (error) {
-    console.error("Story creation error:", error);
+  } catch (err) {
+    console.error("Story creation error:", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

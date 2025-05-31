@@ -98,8 +98,8 @@ const DownloadButton = ({ story }: { story: Story }) => {
       // Save the PDF
       doc.save(`${story.title.replace(/\s+/g, "_")}.pdf`);
       addToast("PDF downloaded successfully!", "success");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
+    } catch (err) {
+      console.error("Error generating PDF:", err);
       addToast("Failed to generate PDF. Please try again.", "error");
     } finally {
       setIsGenerating(false);

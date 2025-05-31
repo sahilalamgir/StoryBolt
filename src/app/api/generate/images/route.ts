@@ -72,8 +72,8 @@ export async function POST(req: NextRequest) {
         );
 
         console.log(`Generated image ${i + 1}/${allImagePrompts.length}`);
-      } catch (error) {
-        console.error(`Failed to generate image ${i + 1}:`, error);
+      } catch (err) {
+        console.error(`Failed to generate image ${i + 1}:`, err);
         // Use a fallback for failed images
         images.push(getFallbackImage(imagePrompt));
       }
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
     console.log("images", typeof images, images.length);
 
     return NextResponse.json({ images: images });
-  } catch (err: unknown) {
+  } catch (err) {
     console.error(err);
     return NextResponse.json(
       {

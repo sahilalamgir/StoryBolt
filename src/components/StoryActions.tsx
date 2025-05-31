@@ -53,7 +53,6 @@ export default function StoryActions({ bookId, authorId }: Props) {
       book_id: bookId,
     });
     if (error) {
-      console.error("Favorite error:", error);
       addToast("Could not favorite story.", "error");
       return;
     } else {
@@ -73,7 +72,6 @@ export default function StoryActions({ bookId, authorId }: Props) {
       })
       .eq("id", bookId);
     if (error) {
-      console.error("Publish error:", error);
       addToast("Could not publish story.", "error");
       return;
     } else {
@@ -90,7 +88,6 @@ export default function StoryActions({ bookId, authorId }: Props) {
       .delete()
       .eq("book_id", bookId);
     if (error) {
-      console.error("Unfavorite error:", error);
       addToast("Could not unfavorite story.", "error");
       return;
     } else {
@@ -111,7 +108,6 @@ export default function StoryActions({ bookId, authorId }: Props) {
       })
       .eq("id", bookId);
     if (error) {
-      console.error("Unpublish error:", error);
       addToast("Could not unpublish story.", "error");
       return;
     } else {
@@ -126,7 +122,6 @@ export default function StoryActions({ bookId, authorId }: Props) {
     if (!client) return;
     const { error } = await client.from("books").delete().eq("id", bookId);
     if (error) {
-      console.error("Delete error:", error);
       addToast("Could not delete story.", "error");
       return;
     }
