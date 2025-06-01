@@ -6,12 +6,12 @@ import { Redis } from "@upstash/redis";
 // Create a new ratelimiter that allows 10 requests per 10 seconds
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(10, "10 s"),
+  limiter: Ratelimit.slidingWindow(5, "10 s"),
 });
 
 const isProtectedRoute = createRouteMatcher([
   "/generate(.*)",
-  "/story(.*)",
+  "/story/(.*)",
   "/history(.*)",
   "/favorited(.*)",
   "/community(.*)",
