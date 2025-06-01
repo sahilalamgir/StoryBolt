@@ -28,7 +28,6 @@ const Hero = () => {
               <span className="bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent">
                 Unleash Your
               </span>{" "}
-              <br />
               <span className="bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">
                 Imagination
               </span>
