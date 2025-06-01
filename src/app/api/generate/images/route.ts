@@ -78,7 +78,6 @@ export async function POST(req: NextRequest) {
         images.push(getFallbackImage(imagePrompt));
       }
     }
-    console.log("images", typeof images, images.length);
 
     return NextResponse.json({ images });
   } catch (err) {
