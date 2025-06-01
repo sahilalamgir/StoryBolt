@@ -4,6 +4,7 @@ export async function POST(req: Request) {
   try {
     const { prompt, genre, pageCount } = await req.json();
     console.log(prompt, genre, pageCount);
+    
     const aiPrompt = `Genre: ${genre}
 User prompt: ${prompt}
 
@@ -36,6 +37,7 @@ Example of the exact shape (for a page count of 3):
     if (!data.title || !data.paragraphs || !data.imagePrompts) {
       throw new Error("Invalid response structure from AI service");
     }
+    console.log(data);
 
     return NextResponse.json(data);
   } catch (err) {

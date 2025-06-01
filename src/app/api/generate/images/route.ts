@@ -53,9 +53,9 @@ function getFallbackImage(prompt: string) {
 export async function POST(req: NextRequest) {
   try {
     const { artStyle, allImagePrompts } = await req.json();
+    console.log(artStyle, allImagePrompts);
 
     const images = [];
-
     // Process images sequentially with a delay between requests
     for (let i = 0; i < allImagePrompts.length; i++) {
       const imagePrompt = allImagePrompts[i];
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     }
     console.log("images", typeof images, images.length);
 
-    return NextResponse.json({ images: images });
+    return NextResponse.json({ images });
   } catch (err) {
     console.error(err);
     return NextResponse.json(

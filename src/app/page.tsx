@@ -5,6 +5,9 @@ import Showcase from "@/components/Showcase";
 import Testimonials from "@/components/Testimonials";
 import SignInSection from "@/components/SignInSection";
 
+// Enable Static Site Generation
+export const dynamic = "force-static";
+
 const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-purple-50">

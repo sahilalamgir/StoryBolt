@@ -1,7 +1,6 @@
 import StorySearch from "@/components/StorySearch";
-import { auth } from "@clerk/nextjs/server";
-import { getStories } from "@/lib/getStories";
-import StoryBox from "@/components/StoryBox";
+import StoriesLoader from "@/components/StoriesLoader";
+import { Suspense } from "react";
 
 export const revalidate = 60;
 
@@ -13,15 +12,6 @@ const page = async ({
   const query = (await searchParams).query;
   const genre = (await searchParams).genre;
 
-  // 1) Grab Clerk’s session (with cookies) on the server
-  const { getToken, userId } = await auth();
-  const stories = await getStories({
-    type: "favorited",
-    query,
-    genre,
-    userId: userId ?? undefined,
-    getToken: () => getToken({ template: "supabase" }),
-  });
   return (
     <div className="flex flex-col items-center min-h-screen pt-32 pb-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <div className="flex flex-col items-center justify-center">
@@ -34,7 +24,18 @@ const page = async ({
           </span>
         </h1>
         <StorySearch query={query} genre={genre} type="favorited" />
-        <StoryBox stories={stories} />
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              <span className="ml-2 text-gray-600">
+                Loading your favorites...
+              </span>
+            </div>
+          }
+        >
+          <StoriesLoader type="favorited" query={query} genre={genre} />
+        </Suspense>
       </div>
     </div>
   );
