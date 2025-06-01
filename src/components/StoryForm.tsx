@@ -44,7 +44,7 @@ export default function StoryForm() {
   const { user } = useUser();
   const { addToast } = useToast();
 
-  const clamp = (n: number) => Math.min(20, Math.max(5, n));
+  const clamp = (n: number) => Math.min(10, Math.max(5, n));
 
   const generateStory = async () => {
     try {

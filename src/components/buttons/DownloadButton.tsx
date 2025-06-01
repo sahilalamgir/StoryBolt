@@ -40,12 +40,14 @@ const DownloadButton = ({ story }: { story: Story }) => {
       // Add title page
       doc.setFontSize(24);
       doc.setFont("helvetica", "bold");
-      doc.text(story.title, 105, 60, { align: "center" });
+      const titleLines = doc.splitTextToSize(story.title, 170);
+      doc.text(titleLines, 105, 60, { align: "center" });
 
       // Add author information
       doc.setFontSize(16);
       doc.setFont("helvetica", "italic");
-      doc.text(`by ${story.authorName}`, 105, 80, { align: "center" });
+      const authorLines = doc.splitTextToSize(`by ${story.authorName}`, 170);
+      doc.text(authorLines, 105, 80, { align: "center" });
 
       // Add genre
       doc.setFontSize(14);
