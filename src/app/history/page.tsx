@@ -15,7 +15,7 @@ const page = async ({
   return (
     <div className="flex flex-col items-center min-h-screen pt-32 pb-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+        <h1 className="text-5xl md:text-6xl font-bold leading-tight text-center">
           <span className="bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent">
             Your Generated{" "}
           </span>
