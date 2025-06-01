@@ -18,12 +18,25 @@ Do NOT output any code fences (\`\`\`), Markdown, comments, ellipses, or extra t
 Do NOT use single quotes (only standard JSON double quotes).  
 Do NOT include trailing commas.
 Do NOT generate any NSFW content.
+Do NOT forget to include all of the braces ({}) and square brackets ([]).
 When using apostrophes in the title and paragraphs, ONLY use straight apostrophes (').
 
 Example of the exact shape (for a page count of 3):
 
 \`\`\`json
-{"title":"A Hero is Born","paragraphs":["First paragraph text here. Second sentence. Third sentence.","Second paragraph text here. Second sentence. Third sentence.","Third paragraph text here. Second sentence. Third sentence."],"imagePrompts":["A boy standing alone under a stormy sky.","A tall castle perched atop a snowy mountain.","A fierce dragon breathing flame over a village at dawn."]}`;
+{
+  "title": "A Hero is Born",
+  "paragraphs": [
+    "First paragraph text here. Second sentence. Third sentence.",
+    "Second paragraph text here. Second sentence. Third sentence.",
+    "Third paragraph text here. Second sentence. Third sentence."
+  ],
+  "imagePrompts": [
+    "A boy standing alone under a stormy sky.",
+    "A tall castle perched atop a snowy mountain.",
+    "A fierce dragon breathing flame over a village at dawn."
+  ]
+}`;
     const resp = await fetch(
       `https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`,
     );
