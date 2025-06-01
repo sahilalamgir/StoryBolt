@@ -2,7 +2,7 @@ import StorySearch from "@/components/StorySearch";
 import StoriesLoader from "@/components/StoriesLoader";
 import { Suspense } from "react";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 const page = async ({
   searchParams,

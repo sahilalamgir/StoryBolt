@@ -48,86 +48,115 @@ export default function StoryActions({ bookId, authorId }: Props) {
 
   // 1) Favorite handler
   const favoriteStory = useCallback(async () => {
-    if (!client || !bookId) return;
-    const { error } = await client.from("favorites").insert({
-      book_id: bookId,
-    });
-    if (error) {
-      addToast("Could not favorite story.", "error");
-      return;
-    } else {
+    if (!bookId) return;
+
+    try {
+      const response = await fetch(`/api/stories/${bookId}/favorite`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to favorite story");
+      }
+
       addToast("Story favorited!", "success");
       setFavorited(true);
+      router.refresh(); // Refresh server components
+    } catch (error) {
+      console.error("Favorite error:", error);
+      addToast("Could not favorite story.", "error");
     }
-  }, [client, bookId, addToast]);
+  }, [bookId, addToast, router]);
 
   // 2) Publish handler
   const publishStory = useCallback(async () => {
-    if (!client) return;
-    const { error } = await client
-      .from("books")
-      .update({
-        published: true,
-        published_at: new Date().toISOString(),
-      })
-      .eq("id", bookId);
-    if (error) {
-      addToast("Could not publish story.", "error");
-      return;
-    } else {
+    if (!bookId) return;
+
+    try {
+      const response = await fetch(`/api/stories/${bookId}/publish`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to publish story");
+      }
+
       addToast("Story published!", "success");
       setPublished(true);
+      router.refresh(); // Refresh server components
+    } catch (error) {
+      console.error("Publish error:", error);
+      addToast("Could not publish story.", "error");
     }
-  }, [client, bookId, addToast]);
+  }, [bookId, addToast, router]);
 
   // 3) Unfavorite handler
   const unfavoriteStory = useCallback(async () => {
-    if (!client) return;
-    const { error } = await client
-      .from("favorites")
-      .delete()
-      .eq("book_id", bookId);
-    if (error) {
-      addToast("Could not unfavorite story.", "error");
-      return;
-    } else {
+    if (!bookId) return;
+
+    try {
+      const response = await fetch(`/api/stories/${bookId}/favorite`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to unfavorite story");
+      }
+
       addToast("Story unfavorited!", "success");
       setFavorited(false);
+      router.refresh(); // Refresh server components
+      router.push(`/favorited`);
+    } catch (error) {
+      console.error("Unfavorite error:", error);
+      addToast("Could not unfavorite story.", "error");
     }
-    router.push(`/favorited`);
-  }, [client, bookId, router, addToast]);
+  }, [bookId, router, addToast]);
 
   // 4) Unpublish handler
   const unpublishStory = useCallback(async () => {
-    if (!client) return;
-    const { error } = await client
-      .from("books")
-      .update({
-        published: false,
-        published_at: null,
-      })
-      .eq("id", bookId);
-    if (error) {
-      addToast("Could not unpublish story.", "error");
-      return;
-    } else {
+    if (!bookId) return;
+
+    try {
+      const response = await fetch(`/api/stories/${bookId}/publish`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to unpublish story");
+      }
+
       addToast("Story unpublished!", "success");
       setPublished(false);
+      router.refresh(); // Refresh server components
+      router.push(`/community`);
+    } catch (error) {
+      console.error("Unpublish error:", error);
+      addToast("Could not unpublish story.", "error");
     }
-    router.push(`/community`);
-  }, [client, bookId, router, addToast]);
+  }, [bookId, router, addToast]);
 
   // 5) Delete handler
   const deleteStory = useCallback(async () => {
-    if (!client) return;
-    const { error } = await client.from("books").delete().eq("id", bookId);
-    if (error) {
+    if (!bookId) return;
+
+    try {
+      const response = await fetch(`/api/stories/${bookId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete story");
+      }
+
+      addToast("Story deleted!", "success");
+      router.refresh(); // Refresh server components
+      router.push(`/history`);
+    } catch (error) {
+      console.error("Delete error:", error);
       addToast("Could not delete story.", "error");
-      return;
     }
-    addToast("Story deleted!", "success");
-    router.push(`/history`);
-  }, [client, bookId, router, addToast]);
+  }, [bookId, router, addToast]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">

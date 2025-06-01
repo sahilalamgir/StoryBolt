@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import createClerkSupabaseClient from "@/lib/supabase";
 import { useSession } from "@clerk/nextjs";
+import { revalidateTag } from "next/cache";
 
 type SignedInSessionResource = NonNullable<
   ReturnType<typeof useSession>["session"]
@@ -84,6 +85,9 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
+
+    // Invalidate relevant caches
+    revalidateTag("stories");
 
     return NextResponse.json({ bookId: newBook.id });
   } catch (err) {

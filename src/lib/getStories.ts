@@ -28,6 +28,7 @@ export const getStories = unstable_cache(
   async ({ type, query, genre, userId, getToken }: StoryParams) => {
     // 2) Spin up your Clerk-aware Supabase client
     const supabase = createClerkSupabaseClient({
+      // mimic the "session" shape expected by createClerkSupabaseClient
       getToken,
     } as SignedInSessionResource | null | undefined);
 
@@ -97,5 +98,8 @@ export const getStories = unstable_cache(
     }));
   },
   ["getStories"],
-  { revalidate: 60 },
+  { 
+    revalidate: 60,
+    tags: ["stories"]
+  },
 );

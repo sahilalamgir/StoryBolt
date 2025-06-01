@@ -5,7 +5,7 @@ interface Story {
   genre: string;
   stars: number;
   authorId: string;
-  authorName: string;
+  authorName?: string | null;
 }
 
 export default Story;
