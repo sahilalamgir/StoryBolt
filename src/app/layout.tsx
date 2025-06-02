@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import QueryProvider from "@/components/QueryProvider";
 import { StoryProvider } from "@/contexts/StoryContext";
 import { ToastProvider } from "@/components/ui/toast";
 import Navbar from "@/components/Navbar";
@@ -149,18 +148,16 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <ToastProvider>
-            <QueryProvider>
-              <StoryProvider>
-                <Navbar />
-                <Suspense fallback={<div>Loading...</div>}>
-                  <SignUpLauncher />
-                </Suspense>
-                {children}
-                <Footer />
-                <Analytics />
-                <SpeedInsights />
-              </StoryProvider>
-            </QueryProvider>
+            <StoryProvider>
+              <Navbar />
+              <Suspense fallback={<div>Loading...</div>}>
+                <SignUpLauncher />
+              </Suspense>
+              {children}
+              <Footer />
+              <Analytics />
+              <SpeedInsights />
+            </StoryProvider>
           </ToastProvider>
         </body>
       </html>
