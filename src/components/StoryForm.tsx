@@ -41,70 +41,100 @@ export default function StoryForm() {
   const [pageCount, setPageCount] = useState(10);
   const [inputValue, setInputValue] = useState(String(10));
   const [loading, setLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState("");
+  const [imageProgress, setImageProgress] = useState({ current: 0, total: 0 });
   const { user } = useUser();
   const { addToast } = useToast();
 
-  const clamp = (n: number) => Math.min(10, Math.max(5, n));
+  const clamp = (n: number) => Math.min(20, Math.max(5, n));
 
   const generateStory = async () => {
     try {
       setLoading(true);
+      setLoadingStep("Generating text...");
 
+      // Step 1: Generate text
       const textData = await fetch("/api/generate/text", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt, genre, pageCount }),
       });
+
       if (!textData.ok) {
-        throw new Error(
-          `Failed to generate text: HTTP ${
-            textData.status
-          }: ${await textData.text()}`
-        );
+        throw new Error(`Failed to generate text: HTTP ${textData.status}`);
       }
+
       const { title, paragraphs, imagePrompts } = await textData.json();
-
-      const imageData = await fetch("/api/generate/images", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          artStyle,
-          allImagePrompts: [title, ...imagePrompts],
-        }),
+      console.log("Text generated:", {
+        title,
+        paragraphCount: paragraphs.length,
       });
-      if (!imageData.ok) {
-        throw new Error(
-          `Failed to generate images: HTTP ${
-            imageData.status
-          }: ${await imageData.text()}`
-        );
-      }
-      const { images } = await imageData.json();
 
-      // Save the story to database and get book ID
+      // Step 2: Generate images sequentially
+      setLoadingStep("Generating images...");
+      const allImagePrompts = [title, ...imagePrompts];
+      setImageProgress({ current: 0, total: allImagePrompts.length });
+
+      const images: string[] = new Array(allImagePrompts.length);
+
+      // Generate images with a small delay between requests
+      for (let i = 0; i < allImagePrompts.length; i++) {
+        setImageProgress({ current: i + 1, total: allImagePrompts.length });
+
+        try {
+          const imageResponse = await fetch("/api/generate/image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              imagePrompt: allImagePrompts[i],
+              artStyle,
+              index: i,
+            }),
+          });
+
+          if (imageResponse.ok) {
+            const { image, success } = await imageResponse.json();
+            images[i] = image;
+
+            if (!success) {
+              console.warn(`Image ${i + 1} used fallback`);
+              addToast(`Image ${i + 1} used fallback.`, "warning");
+            }
+          } else {
+            // Fallback for failed request
+            console.error(`Image ${i + 1} request failed`);
+            addToast(`Image ${i + 1} request failed.`, "error");
+            images[i] = createFallbackImage(allImagePrompts[i]);
+          }
+        } catch (err) {
+          console.error(`Image ${i + 1} generation error:`, err);
+          addToast(`Image ${i + 1} generation error.`, "error");
+          images[i] = createFallbackImage(allImagePrompts[i]);
+        }
+
+        // Small delay to be nice to the API
+        if (i < allImagePrompts.length - 1) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
+      }
+
+      console.log("All images generated");
+
+      // Step 3: Save story
+      setLoadingStep("Saving story...");
       const storyData = await fetch("/api/stories", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, paragraphs, images, genre }),
       });
 
       if (!storyData.ok) {
-        throw new Error(
-          `Failed to save story: HTTP ${
-            storyData.status
-          }: ${await storyData.text()}`
-        );
+        throw new Error(`Failed to save story: HTTP ${storyData.status}`);
       }
 
       const { bookId } = await storyData.json();
 
-      // Set story in context for potential future use
+      // Set story in context
       setStory({
         title,
         paragraphs,
@@ -115,25 +145,39 @@ export default function StoryForm() {
         authorName: user?.fullName ?? "",
       });
 
-      // Redirect to the individual story page
+      // Redirect to story
       router.push(`/story/${bookId}`);
     } catch (err) {
       console.error("Error generating story:", err);
-      addToast("Error generating story. Please try again later.", "error");
-    } finally {
-      setLoading(false);
+      setLoadingStep("Generation failed. Please try again.");
+      setTimeout(() => setLoading(false), 2000);
     }
+  };
+
+  const createFallbackImage = (prompt: string) => {
+    return `data:image/svg+xml;base64,${Buffer.from(
+      `<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+      <rect width="512" height="512" fill="#f0f0f0"/>
+      <text x="50%" y="50%" font-family="Arial" font-size="24" fill="#666" text-anchor="middle">
+        Image generation failed
+      </text>
+      <text x="50%" y="60%" font-family="Arial" font-size="18" fill="#888" text-anchor="middle">
+        ${prompt}
+      </text>
+    </svg>`
+    ).toString("base64")}`;
   };
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-      {/* Left pane: prompt + button */}
+      {/* Left pane */}
       <div className="flex flex-col h-full">
         <textarea
           className="flex-1 border border-gray-300 rounded-md p-4 mb-4 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300"
           placeholder="Enter your story prompt"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
+          disabled={loading}
         />
         <button
           onClick={generateStory}
@@ -144,7 +188,18 @@ export default function StoryForm() {
               : "bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-xl"
           }`}
         >
-          {loading ? "Generating…" : "Generate Story"}
+          {loading ? (
+            <div className="flex flex-col items-center space-y-2">
+              <span>{loadingStep}</span>
+              {imageProgress.total > 0 && (
+                <span className="text-sm">
+                  Images: {imageProgress.current}/{imageProgress.total}
+                </span>
+              )}
+            </div>
+          ) : (
+            "Generate Story"
+          )}
         </button>
       </div>
 
@@ -162,6 +217,7 @@ export default function StoryForm() {
                   value={g}
                   checked={genre === g}
                   onChange={() => setGenre(g)}
+                  disabled={loading}
                   className="h-4 w-4 text-indigo-600 border-gray-300"
                 />
                 <span className="text-gray-700">{g}</span>
@@ -182,6 +238,7 @@ export default function StoryForm() {
                   value={a}
                   checked={artStyle === a}
                   onChange={() => setArtStyle(a)}
+                  disabled={loading}
                   className="h-4 w-4 text-indigo-600 border-gray-300"
                 />
                 <span className="text-gray-700">{a}</span>
@@ -201,6 +258,7 @@ export default function StoryForm() {
             min={5}
             max={20}
             value={inputValue}
+            disabled={loading}
             onChange={(e) => {
               const raw = e.target.value.replace(/\D/g, "");
               setInputValue(raw);
