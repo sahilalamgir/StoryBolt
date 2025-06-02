@@ -1,6 +1,33 @@
+import { Metadata } from "next";
 import StorySearch from "@/components/StorySearch";
 import StoriesLoader from "@/components/StoriesLoader";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Community Stories - Discover AI-Generated Stories",
+  description:
+    "Explore amazing AI-generated stories from the StoryBolt community. Discover fantasy, sci-fi, romance, and mystery stories created by users worldwide.",
+  keywords: [
+    "community stories",
+    "AI story collection",
+    "published stories",
+    "story library",
+    "shared stories",
+  ],
+  openGraph: {
+    title: "Community Stories - StoryBolt",
+    description: "Discover amazing AI-generated stories from our community",
+    url: "https://storybolt.vercel.app/community",
+    images: [
+      {
+        url: "/seo/opengraph-community.png",
+        width: 1200,
+        height: 630,
+        alt: "StoryBolt Community Stories",
+      },
+    ],
+  },
+};
 
 export const revalidate = 300;
 

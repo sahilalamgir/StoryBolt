@@ -1,6 +1,24 @@
+import { Metadata } from "next";
 import StorySearch from "@/components/StorySearch";
 import StoriesLoader from "@/components/StoriesLoader";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Favorited Stories - Your Story Collection",
+  description:
+    "Access your favorite AI-generated stories. Browse and manage your curated collection of stories from the StoryBolt community.",
+  keywords: [
+    "favorite stories",
+    "bookmarked stories",
+    "saved stories",
+    "story favorites",
+    "story collection",
+  ],
+  robots: {
+    index: false, // Private user content
+    follow: true,
+  },
+};
 
 export const revalidate = 60;
 

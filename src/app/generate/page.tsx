@@ -1,4 +1,36 @@
+import { Metadata } from "next";
 import StoryForm from "@/components/StoryForm";
+
+export const metadata: Metadata = {
+  title: "Create Your Story - AI Story Generator",
+  description:
+    "Start creating your personalized AI-generated story. Choose from 10+ genres and art styles. Generate stories from 5-20 pages with custom illustrations.",
+  keywords: [
+    "create AI story",
+    "story generator form",
+    "custom story creation",
+    "AI story maker",
+    "generate custom story",
+  ],
+  openGraph: {
+    title: "Create Your Story - StoryBolt AI Generator",
+    description:
+      "Start creating your personalized AI story. Choose genre, art style, and page count.",
+    url: "https://storybolt.vercel.app/generate",
+    images: [
+      {
+        url: "/seo/opengraph-generate.png",
+        width: 1200,
+        height: 630,
+        alt: "StoryBolt Story Creation Interface",
+      },
+    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function Page() {
   return (

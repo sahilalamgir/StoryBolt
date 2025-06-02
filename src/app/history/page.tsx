@@ -1,6 +1,24 @@
+import { Metadata } from "next";
 import StorySearch from "@/components/StorySearch";
 import StoriesLoader from "@/components/StoriesLoader";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Your Stories - Story History",
+  description:
+    "View all your AI-generated stories. Access your personal collection of stories created with StoryBolt's AI story generator.",
+  keywords: [
+    "my stories",
+    "story history",
+    "personal stories",
+    "user stories",
+    "story collection",
+  ],
+  robots: {
+    index: false, // Private user content
+    follow: true,
+  },
+};
 
 export const revalidate = 60;
 
