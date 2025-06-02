@@ -28,18 +28,6 @@ const Footer = () => {
             >
               Testimonials
             </Link>
-            <Link
-              href="#"
-              className="text-indigo-200 hover:text-white transition"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="#"
-              className="text-indigo-200 hover:text-white transition"
-            >
-              Terms
-            </Link>
           </div>
         </div>
         <div className="border-t border-indigo-800 pt-8">
@@ -47,7 +35,7 @@ const Footer = () => {
             Your imagination, our technology, together creating endless stories.
           </p>
           <p className="text-center text-sm mt-4 text-indigo-400">
-            © {new Date().getFullYear()} StoryBolt. All rights reserved.
+            &copy; {new Date().getFullYear()} StoryBolt. All rights reserved.
           </p>
         </div>
       </div>
