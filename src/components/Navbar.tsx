@@ -5,6 +5,7 @@ import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import Image from "next/image";
 
 const Navbar = () => {
   const router = useRouter();
@@ -30,6 +31,13 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Link className="text-2xl font-bold" href="/">
+              <Image
+                className="inline"
+                src="/logo.png"
+                alt="Story Bolt"
+                width={32}
+                height={32}
+              />
               <span className="bg-gradient-to-r from-purple-700 to-indigo-500 bg-clip-text text-transparent">
                 Story
               </span>

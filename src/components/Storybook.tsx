@@ -58,9 +58,12 @@ const Storybook = ({ story }: { story: Story }) => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious className="hidden md:flex" />
+        <CarouselNext className="hidden md:flex" />
       </Carousel>
+      <p className="block md:hidden text-center text-gray-500 italic text-sm -mt-4 mb-4">
+        Turn pages by swiping left or right
+      </p>
     </>
   );
 };
