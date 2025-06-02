@@ -47,8 +47,8 @@ export async function POST(
     revalidateTag("story-details");
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Publish error:", error);
+  } catch (err) {
+    console.error("Publish error:", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -95,8 +95,8 @@ export async function DELETE(
     revalidateTag("story-details");
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Unpublish error:", error);
+  } catch (err) {
+    console.error("Unpublish error:", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

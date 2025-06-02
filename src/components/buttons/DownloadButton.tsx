@@ -61,7 +61,8 @@ const DownloadButton = ({ story }: { story: Story }) => {
           const coverImageData = getImageDataUrl(coverImageObj);
           doc.addImage(coverImageData, "JPEG", 50, 120, 110, 110);
         } catch (err) {
-          console.error("Error loading cover image:", err);
+          void err;
+          addToast("Failed to load cover image.", "error");
         }
       }
 
@@ -83,7 +84,8 @@ const DownloadButton = ({ story }: { story: Story }) => {
             const pageImageData = getImageDataUrl(pageImageObj);
             doc.addImage(pageImageData, "JPEG", 50, 30, 110, 110);
           } catch (err) {
-            console.error(`Error loading image ${i + 1}:`, err);
+            void err;
+            addToast(`Failed to load image ${i + 1}.`, "error");
           }
         }
 
@@ -101,7 +103,7 @@ const DownloadButton = ({ story }: { story: Story }) => {
       doc.save(`${story.title.replace(/\s+/g, "_")}.pdf`);
       addToast("PDF downloaded successfully!", "success");
     } catch (err) {
-      console.error("Error generating PDF:", err);
+      void err;
       addToast("Failed to generate PDF. Please try again.", "error");
     } finally {
       setIsGenerating(false);

@@ -93,17 +93,15 @@ export default function StoryForm() {
             images[i] = image;
 
             if (!success) {
-              console.warn(`Image ${i + 1} used fallback`);
               addToast(`Image ${i + 1} used fallback.`, "warning");
             }
           } else {
             // Fallback for failed request
-            console.error(`Image ${i + 1} request failed`);
             addToast(`Image ${i + 1} request failed.`, "error");
             images[i] = createFallbackImage(allImagePrompts[i]);
           }
         } catch (err) {
-          console.error(`Image ${i + 1} generation error:`, err);
+          void err;
           addToast(`Image ${i + 1} generation error.`, "error");
           images[i] = createFallbackImage(allImagePrompts[i]);
         }
@@ -142,7 +140,7 @@ export default function StoryForm() {
       // Redirect to story
       router.push(`/story/${bookId}`);
     } catch (err) {
-      console.error("Error generating story:", err);
+      void err;
       setLoadingStep("Generation failed. Please try again.");
       setTimeout(() => setLoading(false), 2000);
     }

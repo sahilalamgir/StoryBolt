@@ -42,8 +42,8 @@ export async function POST(
     revalidateTag("story-details");
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Favorite error:", error);
+  } catch (err) {
+    console.error("Favorite error:", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -86,8 +86,8 @@ export async function DELETE(
     revalidateTag("story-details");
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Unfavorite error:", error);
+  } catch (err) {
+    console.error("Unfavorite error:", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

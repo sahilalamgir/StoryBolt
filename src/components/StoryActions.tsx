@@ -38,13 +38,13 @@ export default function StoryActions({ bookId, authorId }: Props) {
         .eq("favorites.user_id", session?.user.id)
         .single();
       if (error) {
-        console.error("Fetch error:", error);
+        addToast("Could not fetch story.", "error");
         return;
       }
       setPublished(data.published);
       setFavorited(data.favorites.length > 0);
     })();
-  }, [client, bookId, session?.user.id]);
+  }, [client, bookId, session?.user.id, addToast]);
 
   // 1) Favorite handler
   const favoriteStory = useCallback(async () => {
@@ -62,8 +62,8 @@ export default function StoryActions({ bookId, authorId }: Props) {
       addToast("Story favorited!", "success");
       setFavorited(true);
       router.refresh(); // Refresh server components
-    } catch (error) {
-      console.error("Favorite error:", error);
+    } catch (err) {
+      void err;
       addToast("Could not favorite story.", "error");
     }
   }, [bookId, addToast, router]);
@@ -84,8 +84,8 @@ export default function StoryActions({ bookId, authorId }: Props) {
       addToast("Story published!", "success");
       setPublished(true);
       router.refresh(); // Refresh server components
-    } catch (error) {
-      console.error("Publish error:", error);
+    } catch (err) {
+      void err;
       addToast("Could not publish story.", "error");
     }
   }, [bookId, addToast, router]);
@@ -107,8 +107,8 @@ export default function StoryActions({ bookId, authorId }: Props) {
       setFavorited(false);
       router.refresh(); // Refresh server components
       router.push(`/favorited`);
-    } catch (error) {
-      console.error("Unfavorite error:", error);
+    } catch (err) {
+      void err;
       addToast("Could not unfavorite story.", "error");
     }
   }, [bookId, router, addToast]);
@@ -130,8 +130,8 @@ export default function StoryActions({ bookId, authorId }: Props) {
       setPublished(false);
       router.refresh(); // Refresh server components
       router.push(`/community`);
-    } catch (error) {
-      console.error("Unpublish error:", error);
+    } catch (err) {
+      void err;
       addToast("Could not unpublish story.", "error");
     }
   }, [bookId, router, addToast]);
@@ -152,8 +152,8 @@ export default function StoryActions({ bookId, authorId }: Props) {
       addToast("Story deleted!", "success");
       router.refresh(); // Refresh server components
       router.push(`/history`);
-    } catch (error) {
-      console.error("Delete error:", error);
+    } catch (err) {
+      void err;
       addToast("Could not delete story.", "error");
     }
   }, [bookId, router, addToast]);

@@ -43,8 +43,8 @@ export async function DELETE(
     revalidateTag("story-details");
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Delete error:", error);
+  } catch (err) {
+    console.error("Delete error:", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

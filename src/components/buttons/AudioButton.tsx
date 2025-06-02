@@ -71,7 +71,7 @@ export default function AudioButton({ text }: { text: string }) {
         }
       });
     } catch (err) {
-      console.error("Audio generation error:", err);
+      void err;
       addToast("Failed to generate audio. Please try again later.", "error");
     } finally {
       setIsLoading(false);
