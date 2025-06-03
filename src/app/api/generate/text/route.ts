@@ -1,46 +1,63 @@
 import { NextResponse } from "next/server";
 
-async function fetchWithRetry(url: string, totalTimeoutMs = 23000) { // 23s to leave 2s buffer for Vercel
+async function fetchWithRetry(url: string, totalTimeoutMs = 33000) { // 33s to leave 2s buffer for Vercel's 35s limit
   const startTime = Date.now();
   let attempt = 0;
   let lastError;
+
+  console.log(`🔍 Starting fetch to: ${url.substring(0, 100)}...`);
+  console.log(`⏱️ Total timeout: ${totalTimeoutMs}ms (33s for 35s Vercel limit)`);
 
   while (Date.now() - startTime < totalTimeoutMs) {
     attempt++;
     const remainingTime = totalTimeoutMs - (Date.now() - startTime);
     
-    if (remainingTime < 5000) break; // Need at least 5s for an attempt
-    
+    const attemptStart = Date.now();
     try {
-      console.log(`Text generation attempt ${attempt}, remaining time: ${Math.round(remainingTime/1000)}s`);
+      console.log(`🔄 Text generation attempt ${attempt}, remaining time: ${Math.round(remainingTime/1000)}s`);
       
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), Math.min(remainingTime - 1000, 15000)); // Max 15s per attempt
+      // Give each attempt up to 20 seconds, but respect remaining time
+      const timeoutId = setTimeout(() => {
+        console.log(`⚠️ Aborting attempt ${attempt} due to timeout`);
+        controller.abort();
+      }, Math.min(remainingTime - 1000, 20000));
 
+      console.log(`📡 Making fetch request... (attempt ${attempt})`);
       const resp = await fetch(url, {
         signal: controller.signal,
+        headers: {
+          'User-Agent': 'StoryBolt/1.0 (Vercel)',
+          'Accept': 'application/json',
+        }
       });
+      
+      const fetchTime = Date.now() - attemptStart;
+      console.log(`📡 Fetch completed in ${fetchTime}ms (attempt ${attempt})`);
 
       clearTimeout(timeoutId);
 
       if (resp.ok) {
-        console.log(`Text generation succeeded on attempt ${attempt}`);
+        console.log(`✅ Text generation succeeded on attempt ${attempt} after ${fetchTime}ms`);
         return resp;
       }
 
-      lastError = new Error(`HTTP ${resp.status}: ${await resp.text()}`);
-      console.error(`Attempt ${attempt} failed:`, lastError);
+      const errorText = await resp.text();
+      lastError = new Error(`HTTP ${resp.status}: ${errorText}`);
+      console.error(`❌ Attempt ${attempt} failed with status ${resp.status} after ${fetchTime}ms`);
     } catch (err) {
+      const attemptTime = Date.now() - attemptStart;
       lastError = err;
-      console.error(`Attempt ${attempt} failed:`, err);
+      console.error(`❌ Attempt ${attempt} failed after ${attemptTime}ms:`, err);
       
       if (err instanceof Error && err.name === 'AbortError') {
-        console.error(`Attempt ${attempt} timed out`);
+        console.error(`⏰ Attempt ${attempt} timed out after ${attemptTime}ms`);
       }
     }
 
-    // Short delay before retry, but only if we have time
-    if (Date.now() - startTime < totalTimeoutMs - 2000) {
+    // Short delay before retry, but only if we have enough time left
+    if (Date.now() - startTime < totalTimeoutMs - 10000) { // Need 10s for next attempt
+      console.log(`⏸️ Waiting 1s before retry...`);
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
   }
@@ -53,9 +70,11 @@ export async function POST(req: Request) {
   console.log(`🚀 Text generation started at ${new Date().toISOString()}`);
   
   try {
+    const parseStart = Date.now();
     const { prompt, genre, pageCount } = await req.json();
-    console.log(prompt, genre, pageCount);
+    console.log(`📝 Request parsed in ${Date.now() - parseStart}ms - Genre: ${genre}, Pages: ${pageCount}, Prompt length: ${prompt.length}`);
 
+    const promptStart = Date.now();
     const aiPrompt = `Genre: ${genre}
 User prompt: ${prompt}
 
@@ -88,19 +107,27 @@ Example of the exact shape (for a page count of 3):
     "A fierce dragon breathing flame over a village at dawn."
   ]
 }`;
+
+    console.log(`📋 AI prompt prepared in ${Date.now() - promptStart}ms (length: ${aiPrompt.length} chars)`);
+    
+    const fetchStart = Date.now();
     const resp = await fetchWithRetry(
       `https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`
     );
+    console.log(`🌐 Total fetch time: ${Date.now() - fetchStart}ms`);
 
+    const parseJsonStart = Date.now();
     const data = await resp.json();
+    console.log(`🔧 JSON parsing took: ${Date.now() - parseJsonStart}ms`);
 
     // Validate response structure
     if (!data.title || !data.paragraphs || !data.imagePrompts) {
       throw new Error("Invalid response structure from AI service");
     }
-    console.log(data);
 
     console.log(`✅ Text generation completed in ${Date.now() - startTime}ms`);
+    console.log(`📊 Story: "${data.title}" with ${data.paragraphs.length} paragraphs`);
+
     return NextResponse.json(data);
   } catch (err) {
     console.error(`❌ Text generation failed after ${Date.now() - startTime}ms:`, err);

@@ -4,7 +4,7 @@
       "maxDuration": 25
     },
     "src/app/api/generate/text/route.ts": {
-      "maxDuration": 25
+      "maxDuration": 35
     },
     "src/app/api/stories/route.ts": {
       "maxDuration": 10

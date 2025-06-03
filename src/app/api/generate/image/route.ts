@@ -1,39 +1,62 @@
 import { NextRequest, NextResponse } from "next/server";
 
-async function fetchWithRetry(url: string, maxRetries = 3, totalTimeoutMs = 23000) { // 23s total
+async function fetchWithRetry(url: string, maxRetries = 3, totalTimeoutMs = 23000) { // 23s to leave 2s buffer for Vercel's 25s limit
   const startTime = Date.now();
   let attempt = 0;
   let lastError;
+
+  console.log(`🖼️ Starting image fetch: ${url.substring(0, 100)}...`);
+  console.log(`⏱️ Total timeout: ${totalTimeoutMs}ms (23s for 25s Vercel limit)`);
 
   while (attempt < maxRetries && Date.now() - startTime < totalTimeoutMs) {
     attempt++;
     const remainingTime = totalTimeoutMs - (Date.now() - startTime);
     
-    if (remainingTime < 3000) break; // Need at least 3s for an attempt
-    
+    const attemptStart = Date.now();
     try {
       if (attempt > 1) {
-        console.log(`Image generation retry attempt ${attempt}`);
+        console.log(`🔄 Image generation retry attempt ${attempt}, remaining time: ${Math.round(remainingTime/1000)}s`);
         await new Promise(resolve => setTimeout(resolve, Math.min(1000 * (attempt - 1), remainingTime / 4)));
+      } else {
+        console.log(`🔄 Image generation attempt ${attempt}, remaining time: ${Math.round(remainingTime/1000)}s`);
       }
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), Math.min(remainingTime - 500, 10000)); // Max 10s per attempt
+      // Increased per-attempt timeout from 10s to 15s, but respect remaining time
+      const timeoutId = setTimeout(() => {
+        console.log(`⚠️ Aborting image attempt ${attempt} due to timeout`);
+        controller.abort();
+      }, Math.min(remainingTime - 500, 15000)); // Max 15s per attempt instead of 10s
 
+      console.log(`📡 Making image fetch request... (attempt ${attempt})`);
       const resp = await fetch(url, {
         signal: controller.signal,
+        headers: {
+          'User-Agent': 'StoryBolt/1.0 (Vercel)',
+          'Accept': 'image/*',
+        }
       });
+
+      const fetchTime = Date.now() - attemptStart;
+      console.log(`📡 Image fetch completed in ${fetchTime}ms (attempt ${attempt})`);
 
       clearTimeout(timeoutId);
 
       if (resp.ok) {
+        console.log(`✅ Image generation succeeded on attempt ${attempt} after ${fetchTime}ms`);
         return await resp.arrayBuffer();
       }
 
       lastError = new Error(`HTTP ${resp.status}`);
+      console.error(`❌ Image attempt ${attempt} failed with status ${resp.status} after ${fetchTime}ms`);
     } catch (err) {
+      const attemptTime = Date.now() - attemptStart;
       lastError = err;
-      console.error(`Image generation attempt ${attempt} failed:`, err);
+      console.error(`❌ Image generation attempt ${attempt} failed after ${attemptTime}ms:`, err);
+      
+      if (err instanceof Error && err.name === 'AbortError') {
+        console.error(`⏰ Image attempt ${attempt} timed out after ${attemptTime}ms`);
+      }
     }
   }
 
