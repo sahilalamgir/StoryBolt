@@ -65,10 +65,6 @@ export default function StoryForm() {
       }
 
       const { title, paragraphs, imagePrompts } = await textData.json();
-      console.log("Text generated:", {
-        title,
-        paragraphCount: paragraphs.length,
-      });
 
       // Step 2: Generate images sequentially
       setLoadingStep("Generating images...");
@@ -117,8 +113,6 @@ export default function StoryForm() {
           await new Promise((resolve) => setTimeout(resolve, 500));
         }
       }
-
-      console.log("All images generated");
 
       // Step 3: Save story
       setLoadingStep("Saving story...");
