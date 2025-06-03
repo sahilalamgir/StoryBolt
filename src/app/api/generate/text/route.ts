@@ -1,6 +1,57 @@
 import { NextResponse } from "next/server";
 
+async function fetchWithRetry(url: string, totalTimeoutMs = 23000) { // 23s to leave 2s buffer for Vercel
+  const startTime = Date.now();
+  let attempt = 0;
+  let lastError;
+
+  while (Date.now() - startTime < totalTimeoutMs) {
+    attempt++;
+    const remainingTime = totalTimeoutMs - (Date.now() - startTime);
+    
+    if (remainingTime < 5000) break; // Need at least 5s for an attempt
+    
+    try {
+      console.log(`Text generation attempt ${attempt}, remaining time: ${Math.round(remainingTime/1000)}s`);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), Math.min(remainingTime - 1000, 15000)); // Max 15s per attempt
+
+      const resp = await fetch(url, {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (resp.ok) {
+        console.log(`Text generation succeeded on attempt ${attempt}`);
+        return resp;
+      }
+
+      lastError = new Error(`HTTP ${resp.status}: ${await resp.text()}`);
+      console.error(`Attempt ${attempt} failed:`, lastError);
+    } catch (err) {
+      lastError = err;
+      console.error(`Attempt ${attempt} failed:`, err);
+      
+      if (err instanceof Error && err.name === 'AbortError') {
+        console.error(`Attempt ${attempt} timed out`);
+      }
+    }
+
+    // Short delay before retry, but only if we have time
+    if (Date.now() - startTime < totalTimeoutMs - 2000) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+
+  throw lastError || new Error('Text generation timed out after multiple attempts');
+}
+
 export async function POST(req: Request) {
+  const startTime = Date.now();
+  console.log(`🚀 Text generation started at ${new Date().toISOString()}`);
+  
   try {
     const { prompt, genre, pageCount } = await req.json();
     console.log(prompt, genre, pageCount);
@@ -37,13 +88,9 @@ Example of the exact shape (for a page count of 3):
     "A fierce dragon breathing flame over a village at dawn."
   ]
 }`;
-    const resp = await fetch(
-      `https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`,
+    const resp = await fetchWithRetry(
+      `https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`
     );
-
-    if (!resp.ok) {
-      throw new Error(`HTTP ${resp.status}: ${await resp.text()}`);
-    }
 
     const data = await resp.json();
 
@@ -53,9 +100,10 @@ Example of the exact shape (for a page count of 3):
     }
     console.log(data);
 
+    console.log(`✅ Text generation completed in ${Date.now() - startTime}ms`);
     return NextResponse.json(data);
   } catch (err) {
-    console.error(err);
+    console.error(`❌ Text generation failed after ${Date.now() - startTime}ms:`, err);
     return NextResponse.json(
       {
         error: err instanceof Error ? err.message : "An unknown error occurred",

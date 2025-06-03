@@ -46,7 +46,7 @@ export default function StoryForm() {
   const { user } = useUser();
   const { addToast } = useToast();
 
-  const clamp = (n: number) => Math.min(20, Math.max(5, n));
+  const clamp = (n: number) => Math.min(10, Math.max(5, n));
 
   const generateStory = async () => {
     try {
@@ -149,14 +149,13 @@ export default function StoryForm() {
   const createFallbackImage = (prompt: string) => {
     return `data:image/svg+xml;base64,${Buffer.from(
       `<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-      <rect width="512" height="512" fill="#f0f0f0"/>
-      <text x="50%" y="50%" font-family="Arial" font-size="24" fill="#666" text-anchor="middle">
-        Image generation failed
-      </text>
-      <text x="50%" y="60%" font-family="Arial" font-size="18" fill="#888" text-anchor="middle">
-        ${prompt}
-      </text>
-    </svg>`
+        <rect width="512" height="512" fill="#e5e7eb"/>
+        <text x="50%" y="45%" font-family="Arial" font-size="20" fill="#6b7280" text-anchor="middle">Story Image</text>
+        <text x="50%" y="55%" font-family="Arial" font-size="14" fill="#9ca3af" text-anchor="middle">${prompt.substring(
+          0,
+          50
+        )}${prompt.length > 50 ? "..." : ""}</text>
+      </svg>`
     ).toString("base64")}`;
   };
 

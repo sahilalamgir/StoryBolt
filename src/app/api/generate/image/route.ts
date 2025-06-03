@@ -1,17 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 
-async function fetchWithRetry(url: string, maxRetries = 3, delayMs = 1000) {
+async function fetchWithRetry(url: string, maxRetries = 3, totalTimeoutMs = 23000) { // 23s total
+  const startTime = Date.now();
+  let attempt = 0;
   let lastError;
 
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
+  while (attempt < maxRetries && Date.now() - startTime < totalTimeoutMs) {
+    attempt++;
+    const remainingTime = totalTimeoutMs - (Date.now() - startTime);
+    
+    if (remainingTime < 3000) break; // Need at least 3s for an attempt
+    
     try {
-      if (attempt > 0) {
-        await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
+      if (attempt > 1) {
+        console.log(`Image generation retry attempt ${attempt}`);
+        await new Promise(resolve => setTimeout(resolve, Math.min(1000 * (attempt - 1), remainingTime / 4)));
       }
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), Math.min(remainingTime - 500, 10000)); // Max 10s per attempt
+
       const resp = await fetch(url, {
-        signal: AbortSignal.timeout(15000), // 15 second timeout per image
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (resp.ok) {
         return await resp.arrayBuffer();
@@ -20,11 +33,11 @@ async function fetchWithRetry(url: string, maxRetries = 3, delayMs = 1000) {
       lastError = new Error(`HTTP ${resp.status}`);
     } catch (err) {
       lastError = err;
-      console.error(`Image generation attempt ${attempt + 1} failed:`, err);
+      console.error(`Image generation attempt ${attempt} failed:`, err);
     }
   }
 
-  throw lastError;
+  throw lastError || new Error('Image generation failed after retries');
 }
 
 function getFallbackImage(prompt: string) {
@@ -32,7 +45,7 @@ function getFallbackImage(prompt: string) {
     `<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
       <rect width="512" height="512" fill="#e5e7eb"/>
       <text x="50%" y="45%" font-family="Arial" font-size="20" fill="#6b7280" text-anchor="middle">Story Image</text>
-      <text x="50%" y="55%" font-family="Arial" font-size="14" fill="#9ca3af" text-anchor="middle">${prompt.substring(0, 25)}...</text>
+      <text x="50%" y="55%" font-family="Arial" font-size="14" fill="#9ca3af" text-anchor="middle">${prompt.substring(0, 50)}${prompt.length > 50 ? "..." : ""}</text>
     </svg>`
   ).toString("base64")}`;
 }
