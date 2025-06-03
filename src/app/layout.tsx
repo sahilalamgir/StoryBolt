@@ -89,7 +89,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png", // [YOUR INPUT: Create 180x180 image in public/apple-touch-icon.png]
+    apple: "/apple-touch-icon.png",
   },
   manifest: "/site.webmanifest",
   verification: {
