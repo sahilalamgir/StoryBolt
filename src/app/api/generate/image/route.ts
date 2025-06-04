@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-async function fetchWithRetry(url: string, maxRetries = 3, totalTimeoutMs = 23000) { // 23s to leave 2s buffer for Vercel's 25s limit
+async function fetchWithRetry(url: string, maxRetries = 3, totalTimeoutMs = 58000) { // 58s to leave 2s buffer for Vercel's 60s default
   const startTime = Date.now();
   let attempt = 0;
   let lastError;
 
   console.log(`🖼️ Starting image fetch: ${url.substring(0, 100)}...`);
-  console.log(`⏱️ Total timeout: ${totalTimeoutMs}ms (23s for 25s Vercel limit)`);
+  console.log(`⏱️ Total timeout: ${totalTimeoutMs}ms (58s for 60s Vercel default)`);
 
   while (attempt < maxRetries && Date.now() - startTime < totalTimeoutMs) {
     attempt++;
@@ -22,11 +22,11 @@ async function fetchWithRetry(url: string, maxRetries = 3, totalTimeoutMs = 2300
       }
 
       const controller = new AbortController();
-      // Increased per-attempt timeout from 10s to 15s, but respect remaining time
+      // Increased per-attempt timeout from 15s to 20s for more generous timing
       const timeoutId = setTimeout(() => {
         console.log(`⚠️ Aborting image attempt ${attempt} due to timeout`);
         controller.abort();
-      }, Math.min(remainingTime - 500, 15000)); // Max 15s per attempt instead of 10s
+      }, Math.min(remainingTime - 500, 20000));
 
       console.log(`📡 Making image fetch request... (attempt ${attempt})`);
       const resp = await fetch(url, {

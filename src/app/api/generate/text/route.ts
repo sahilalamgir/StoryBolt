@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-async function fetchWithRetry(url: string, totalTimeoutMs = 33000) { // 33s to leave 2s buffer for Vercel's 35s limit
+async function fetchWithRetry(url: string, totalTimeoutMs = 58000) { // 58s to leave 2s buffer for Vercel's 60s default
   const startTime = Date.now();
   let attempt = 0;
   let lastError;
 
   console.log(`🔍 Starting fetch to: ${url.substring(0, 100)}...`);
-  console.log(`⏱️ Total timeout: ${totalTimeoutMs}ms (33s for 35s Vercel limit)`);
+  console.log(`⏱️ Total timeout: ${totalTimeoutMs}ms (58s for 60s Vercel default)`);
 
   while (Date.now() - startTime < totalTimeoutMs) {
     attempt++;
@@ -17,11 +17,11 @@ async function fetchWithRetry(url: string, totalTimeoutMs = 33000) { // 33s to l
       console.log(`🔄 Text generation attempt ${attempt}, remaining time: ${Math.round(remainingTime/1000)}s`);
       
       const controller = new AbortController();
-      // Give each attempt up to 20 seconds, but respect remaining time
+      // Give each attempt up to 25 seconds, but respect remaining time (increased from 20s)
       const timeoutId = setTimeout(() => {
         console.log(`⚠️ Aborting attempt ${attempt} due to timeout`);
         controller.abort();
-      }, Math.min(remainingTime - 1000, 20000));
+      }, Math.min(remainingTime - 1000, 25000));
 
       console.log(`📡 Making fetch request... (attempt ${attempt})`);
       const resp = await fetch(url, {
@@ -56,7 +56,7 @@ async function fetchWithRetry(url: string, totalTimeoutMs = 33000) { // 33s to l
     }
 
     // Short delay before retry, but only if we have enough time left
-    if (Date.now() - startTime < totalTimeoutMs - 10000) { // Need 10s for next attempt
+    if (Date.now() - startTime < totalTimeoutMs - 15000) { // Need 15s for next attempt (was 10s)
       console.log(`⏸️ Waiting 1s before retry...`);
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
